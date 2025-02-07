@@ -16,8 +16,9 @@ const Address = () => {
         <div className="md:w-4/5 w-full md:px-10 ">
           <CardAddress />
         </div>
-      </div>
+      </div> 
       <Footer />
+
 
       {/* 
      <Sidebar title="Profile"/>
