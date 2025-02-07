@@ -4,7 +4,7 @@ import Hero from "./Hero";
 import Categories from "./Categories";
 import FlashSales from "./FlashSales";
 import Footer from "../../../components/footer/Footer";
-import NewArrival from "./NewArrival";
+// import NewArrival from "./NewArrival";
 import Latest from "./Latest";
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
       <Categories />
       <FlashSales />
       <Latest />
-      <NewArrival />
+      {/* <NewArrival /> */}
       <Footer />
     </div>
   );

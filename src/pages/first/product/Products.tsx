@@ -1,36 +1,127 @@
-import React, { Fragment, useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  FaRegHeart,
+} from "react-icons/fa6";
+// import Carousel from "react-multi-carousel";
+// import "react-multi-carousel/lib/styles.css";
+import { UserApis } from "../../../apis/userApi/userApi";
+// import Navbar from "../../../components/Navbars/Navbar";
+import Footer from "../../../components/footer/Footer";
+import { useLocation } from "react-router-dom";
+import {
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
+import { AxiosResponse } from "axios";
+// import { debounce } from "lodash"; // For optimizing search
 import { IoArrowBack } from "react-icons/io5";
-import { FaRegHeart } from "react-icons/fa";
 import { GrCycle } from "react-icons/gr";
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
-import { CartApis } from "../../apis/userApi/cartApis";
-import { AxiosResponse } from "axios";
-import { useSelector, useDispatch } from 'react-redux';
+import { CartApis } from "../../../apis/userApi/cartApis";
+import { useSelector, useDispatch } from "react-redux";
 import { Dispatch } from "redux";
-// import { login } from "../../reducer/loginSlice";
-import { useNavigate } from "react-router-dom";
-import { UserApis } from "../../apis/userApi/userApi";
-// import { Listbox } from "@headlessui/react";
-import { Menu, Transition } from "@headlessui/react";
-import { IoIosArrowDown } from "react-icons/io";
+import { login } from "../../../reducer/loginSlice";
 
-const Navbar = () => {
-  // const dispatch: Dispatch = useDispatch();
+const Products = () => {
   const navigate = useNavigate();
-  const userLoginData = useSelector((state:any) => state.data.login.value);
-  const [search, setSearch] = React.useState('');
+  const location = useLocation();
+  const dispatch: Dispatch = useDispatch();
 
-  // console.log(userLoginData)
+  const userLoginData = useSelector((state:any) => state.data.login.value);
+
+  // const { product } = location.state || {};
+  // console.log(product)
   const [collapseShow, setCollapseShow] = React.useState("hidden");
+
+//   React.useEffect(() => {
+//     CartApis.getCart(storeCode).then(
+//         (response: AxiosResponse<any>) => {
+//             if (response?.data) {
+//                 // console.log(response?.data)
+//                 // setname(response?.data?.cart_count);
+//                 setTotal(response?.data?.total)
+//             } else {
+//                 // dispatch(login([]))
+//             }
+//         }
+//     ).catch(function (error) {
+//         // handle error
+//         console.log('eror');
+//     })
+
+// }, []);
+  const [selectedCategory, setSelectedCategory] = useState<any>(
+    location.state?.category_name 
+  );
+
+  console.log(selectedCategory)
+  const [categories, setCategories] = React.useState<any>([]);
+  const [filterProducts, setFilteredProducts] = React.useState<any>([]);
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchresult] = React.useState("");
+  // const carouselRefTwo = useRef<any>(null);
+  const [loader, setLoader] = React.useState<boolean>(false);
   // const [total, setTotal] = React.useState<any>('');
   const [name, setname] = React.useState('');
-  // const [storeData, setStoreData] = React.useState('');
-  const [storeCurrency, setStoreCurrency] = React.useState<any>('');
- 
-  const storeCode = "31958095"
+  // const normalizeString = (string: any) => {
+  //   // Normalize the category string by removing spaces and special characters
+  //   return string.replace(/\s+/g, "").replace(/&/g, "");
+  // };
+
+  const storeCode = "31958095";
+  React.useEffect(() => {
+    UserApis.getCategory(storeCode)
+      .then((response) => {
+        if (response?.data) {
+          // console?.log(response?.data);
+          setCategories(response?.data?.categories?.data || []);
+        } else {
+          // dispatch(login([]))
+        }
+      })
+      .catch(function (error) {});
+  }, [storeCode]);
+
+ // Fetch products when category or search changes
+ useEffect(() => {
+  if (!selectedCategory) return;
+
+  setLoader(true);
+  let query: any = [];
+  if (location?.state?.searchMe) {
+    setSearchresult(location?.state?.searchMe);
+    setSearch(location?.state?.searchMe);
+    query = {
+      search: location?.state?.searchMe,
+      // name: loc,
+      category_id: selectedCategory.id || "",
+    };
+  } else {
+  const trimmedSearch = search.trim(); // Ensure search doesn't send unnecessary spaces
+  query = {
+    search: trimmedSearch,
+    category_id: selectedCategory.id || "",
+  };
+}
+  UserApis.getProduct(storeCode, query)
+    .then((response) => {
+      setLoader(false);
+      if (response?.data?.products) {
+        setFilteredProducts(response.data.products); // ✅ Set products correctly
+        console.log("Fetched Products:", response.data.products);
+      } else {
+        setFilteredProducts([]); // ✅ Prevent undefined issues
+        console.log("No products found");
+      }
+    })
+    .catch((error) => {
+      setLoader(false);
+      console.error("Error fetching products:", error);
+    });
+}, [storeCode, selectedCategory,searchResult, search]);
+
 
   React.useEffect(() => {
     CartApis.getCart(storeCode).then(
@@ -50,104 +141,108 @@ const Navbar = () => {
 
 }, []);
 
-  React.useEffect(() => {
-    UserApis.fetchStoreData(storeCode).then((response) => {
-      if (response?.data) {
-        console.log(response.data);
-        // setStoreData(response?.data?.store);
-        setStoreCurrency(response?.data?.configs.settings);
-
- 
-      }
-    });
-  }, [storeCode]);
-console.log(storeCurrency)
-
-const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
 const logOut = () => {
-  // dispatch(login([]))
-  // navigate("/sign-in");
-  UserApis.logout(storeCode, '').then(
-      (response: AxiosResponse<any>) => {
-          if (response) {
-              navigate('/sign-in');
+  dispatch(login([]))
+  navigate("/sign-in");
+  // AuthApis.logout('').then(
+  //     (response: AxiosResponse<any>) => {
+  //         if (response) {
+  //             navigate('/');
 
-          }
-      }
-  ).catch(function (error: any) {
-      // handle error
-      console.log(error.response.data);
-      console.log("new error");
-  })
+  //         }
+  //     }
+  // ).catch(function (error: any) {
+  //     // handle error
+  //     console.log(error.response.data);
+  //     console.log("new error");
+  // })
 
 };
+  // console.log(categories)
 
+  // Fetch products when category changes
+  // useEffect(() => {
+  //   // if (!selectedCategory) return;
+  //   const trimmedSearch = search.trim(); // Remove unnecessary spaces
 
-  React.useEffect(() => {
-    CartApis.getSelectedCurrency(storeCode).then((response) => {
-      if (response?.data) {
-        console.log(response.data);
-        // setGetSingleProduct(response?.data?.product);
+  //   if (trimmedSearch === "") return; // Prevent empty search from affecting results
 
- 
-      }
-    });
-  }, [storeCode]);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent the form from submitting by default
+  //   setLoader(true);
+  //   const query: any = {
+  //     search: encodeURIComponent(trimmedSearch),
+     
+  //   };
+  //   UserApis.getCategoryProduct(storeCode, selectedCategory.id, query)
+  //     .then((response) => {
+  //       // setLoader(false);
+  //       console.log(response)
+  //       setFilteredProducts(response?.data?.products || []);
+  //     })
+  //     .catch((error) => {
+  //       setLoader(false);
+  //       console.error("Error fetching products:", error);
+  //     });
+  // }, [storeCode, selectedCategory, search]);
 
-    if (search.trim() !== '') {
-        navigate('/product', { state: { searchMe: search } });
-    } else {
-        alert("Please enter a keyword to search.");
-    }
+  // console.log(filterProducts);
+  // console.log(selectedCategory);
+  // const responsive = {
+  //   superLargeDesktop: {
+  //     // the naming can be any, depends on you.
+  //     breakpoint: { max: 4000, min: 3000 },
+  //     items: 6,
+  //   },
+  //   desktop: {
+  //     breakpoint: { max: 3000, min: 1024 },
+  //     items: 6, // optional, default to 1.
+  //   },
+  //   tablet: {
+  //     breakpoint: { max: 1024, min: 464 },
+  //     items: 3, // optional, default to 1.
+  //   },
+  //   mobile: {
+  //     breakpoint: { max: 464, min: 0 },
+  //     items: 2, // optional, default to 1.
+  //   },
+  // };
+
+  // Function to manually trigger left navigation
+  // const handlePrevClickOne = () => {
+  //   carouselRefTwo.current.previous();
+  // };
+
+  // // Function to manually trigger right navigation
+  // const handleNextClickOne = () => {
+  //   carouselRefTwo.current.next();
+  // };
+
+  // Handle category selection
+  const handleCategoryClick = (category: any) => {
+    setSelectedCategory(category);
+    setSearch(""); // Reset search when category changes
   };
+
+  // Debounced search to optimize API calls
+  // const handleSearchChange = debounce((e: any) => {
+  //   setSearch(e.target.value);
+  // }, 500);
+
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault(); // Prevent the form from submitting by default
+  
+      // if (search.trim() !== '') {
+      //     navigate('/product', { state: { searchMe: search } });
+      // } else {
+      //     alert("Please enter a keyword to search.");
+      // }
+    };
+
   return (
     <div>
-      <div className="bg-gray-200 py-2">
-      <div className="flex justify-center w-full ">
-      <div className="max-w-[1500px] w-full px-3">
-<div className="">
-<Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="bg-gray-100 flex gap-2 items-center text-black px-3 py-[2px] rounded-md border border-gray-300 hover:bg-gray-200">
-          {selectedCurrency}
-          <IoIosArrowDown />
-        </Menu.Button>
-      </div>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items className="absolute left-5 mt-2 z-50 w-40 bg-white border border-gray-200 shadow-lg rounded-md overflow-hidden">
-          {storeCurrency?.currencies?.map((currency:any) => (
-            <Menu.Item key={currency}>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "bg-gray-200" : "bg-white"
-                  } w-full px-4 py-2  text-left text-black`}
-                  onClick={() => setSelectedCurrency(currency)}
-                >
-                  {currency}
-                </button>
-              )}
-            </Menu.Item>
-          ))}
-        </Menu.Items>
-      </Transition>
-    </Menu>
-</div>
-        </div>
-      </div>
-      </div>
-      <nav className="hidden md:block border-b">
+      {/* <Navbar /> */}
+<div>
+<nav className="hidden md:block border-b">
         <div className="flex justify-center w-full ">
           <div className="max-w-[1500px] w-full">
             <div className="flex justify-between items-center py-4 gap-4 md:px-[40px] px-3">
@@ -173,11 +268,11 @@ const logOut = () => {
                     <div className="relative w-auto md:w-[200px] lg:w-[500px]">
                       <input
                         type="text"
-                        defaultValue={search}
+                        // defaultValue={search}
                          onChange={e => setSearch(e.target.value)}
                         id="search-dropdown"
                         className="block p-3.5 w-full z-20 text-sm text-gray-900  rounded-full  border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Search everything at M Mart online and in store"
+                        placeholder="Search everything  online and in store"
                       />
                       <button
                         type="submit"
@@ -209,17 +304,21 @@ const logOut = () => {
                 {/* <AutoCompleteSearch /> */}
               </div>
               <div className="flex flex-row font-medium mt-0  space-x-6 text-sm">
-                {/* <div className="flex  gap-2">
+                <div className="flex  gap-2">
+                  {/* <div className=''> */}
                   <GrCycle className=" w-6 h-6" />
+                  {/* </div> */}
                   {
                     <NavLink to={"/"}>
                       <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
                     </NavLink>
                   }
-                </div> */}
+                </div>
 
                 <div className="flex gap-2">
+                  {/* <div className=''> */}
                   <FaRegHeart className=" w-6 h-6" />
+                  {/* </div> */}
                   {
                     <NavLink to={"/"}>
                       <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
@@ -396,7 +495,7 @@ const logOut = () => {
                             <h3 className='text-[11.4px] font-normal mt-2 cursor-pointer'>Hi, {userLoginData?.data?.first_name}</h3>
                         </Tippy>
                         :
-                    <NavLink to={"/sign-in"}>
+                    <NavLink to={"/"}>
                       <h3 className="text-[14px]  font-semibold">Account</h3>
                     </NavLink>
                   }
@@ -905,7 +1004,7 @@ const logOut = () => {
                 <input
                   type="text"
                   //  defaultValue={search}
-                  //  onChange={e => setSearch(e.target.value)}
+                   onChange={e => setSearch(e.target.value)}
                   id="search-dropdown"
                   className="block p-2.5 w-[85vw] z-20 text-sm text-gray-900 bg-[#0071BC] rounded-full border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Search everything here"
@@ -938,198 +1037,157 @@ const logOut = () => {
           {/* <AutoCompleteSearch /> */}
         </div>
       </nav>
+</div>
 
-      {/* <div className="border-y my-1">
-        <div className=" w-full">
-          <div className="flex justify-center w-full">
-            <div className="max-w-[1500px] w-full">
-              <div className="md:flex justify-between items-center py-2 gap-4 md:px-[40px] px-3">
-                <div className="flex gap-3">
-                  <div className="bg-[#027DCB] rounded-md flex gap-2 items-center px-3 py-2 text-white">
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 17 17"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clip-path="url(#clip0_920_2290)">
-                        <path
-                          d="M7.86 8.05667H0.5V2.72333C0.5 2.19 0.695556 1.72778 1.08667 1.33667C1.47778 0.945555 1.95778 0.75 2.52667 0.75H7.86V8.05667ZM1.83333 6.72333H6.52667V2.08333H2.52667C2.31333 2.08333 2.14444 2.14556 2.02 2.27C1.89556 2.39444 1.83333 2.54556 1.83333 2.72333V6.72333ZM16.5 8.05667H9.19333V0.75H14.5267C15.06 0.75 15.5222 0.945555 15.9133 1.33667C16.3044 1.72778 16.5 2.20778 16.5 2.77667V8.05667ZM10.5267 6.72333H15.1667V2.72333C15.1667 2.54556 15.1044 2.39444 14.98 2.27C14.8556 2.14556 14.7044 2.08333 14.5267 2.08333H10.5267V6.72333ZM7.86 16.75H2.52667C1.95778 16.75 1.47778 16.5544 1.08667 16.1633C0.695556 15.7722 0.5 15.31 0.5 14.7767V9.39H7.86V16.75ZM1.83333 10.7233V14.7233C1.83333 14.9367 1.89556 15.1056 2.02 15.23C2.14444 15.3544 2.31333 15.4167 2.52667 15.4167H6.52667V10.7233H1.83333ZM14.5267 16.75H9.19333V9.39H16.5V14.7233C16.5 15.2922 16.3044 15.7722 15.9133 16.1633C15.5222 16.5544 15.0422 16.75 14.4733 16.75H14.5267ZM10.5267 15.4167H14.5267C14.7044 15.4167 14.8556 15.3544 14.98 15.23C15.1044 15.1056 15.1667 14.9367 15.1667 14.7233V10.7233H10.5267V15.4167Z"
-                          fill="white"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_920_2290">
-                          <rect
-                            width="16"
-                            height="16"
-                            fill="white"
-                            transform="matrix(1 0 0 -1 0.5 16.75)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
+  
 
-                    <h4 className="text-[16px] font-[700]">
-                      Browse All Categories
-                    </h4>
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 11 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clip-path="url(#clip0_920_2294)">
-                        <path
-                          d="M10.3199 3.21666L6.21992 7.34999C6.13103 7.41666 6.03103 7.44999 5.91992 7.44999C5.80881 7.44999 5.70881 7.41666 5.61992 7.34999L1.51992 3.21666L0.919922 3.81666L5.01992 7.91666C5.28659 8.1611 5.58659 8.28333 5.91992 8.28333C6.25326 8.28333 6.55326 8.1611 6.81992 7.91666L10.9199 3.81666L10.3199 3.21666Z"
-                          fill="white"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_920_2294">
-                          <rect
-                            width="10"
-                            height="10"
-                            fill="white"
-                            transform="matrix(1 0 0 -1 0.919922 10.75)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
+      <div className="bg-gray-200 w-full py-3">
+        <div className="max-w-[1500px] w-full md:px-[40px] px-3">
+          <div className="flex justify-between w-full">
+            {categories?.length > 0 ? (
+              categories?.map((cat: any) => (
+                <div
+                  // onClick={() => {
+                  //   setProduct(cat?.category_name);
+                  //   getCategory(cat?.category_name);
+                  // }}
+                  onClick={() => handleCategoryClick(cat)}
+                  key={cat?.id}
+                  className={`cursor-pointer px-4  transition-all duration-300 ${
+                    selectedCategory?.id === cat.id
+                      ? "border-b-4 border-blue-500 font-bold text-blue-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  <div className="border rounded-lg flex justify-center">
+                    {/* <img
+                  src={cat?.category_image}
+                  className="rounded-[8px] w-[180px] h-[180px] object-contain"
+                  alt="mart Logo"
+                /> */}
                   </div>
-                  <div className="flex gap-3 items-center">
-                    <div className="flex items-center gap-1 ">
-                      <svg
-                        width="21"
-                        height="22"
-                        viewBox="0 0 21 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g clip-path="url(#clip0_920_2298)">
-                          <g clip-path="url(#clip1_920_2298)">
-                            <g clip-path="url(#clip2_920_2298)">
-                              <mask
-                                id="mask0_920_2298"
-                                maskUnits="userSpaceOnUse"
-                                x="0"
-                                y="0"
-                                width="21"
-                                height="21"
-                              >
-                                <path
-                                  d="M20.9199 0.767151H0.919922V20.7672H20.9199V0.767151Z"
-                                  fill="white"
-                                />
-                              </mask>
-                              <g mask="url(#mask0_920_2298)">
-                                <path
-                                  d="M14.5869 4.16046C13.5869 3.31296 12.5569 2.43379 11.5144 1.39463L10.9202 0.804626L10.3369 1.39546C8.46025 3.27713 7.57358 6.16629 7.18858 7.89963C6.89389 7.44288 6.67522 6.94137 6.54108 6.41463L6.18858 5.05379L5.16358 6.01713C3.36775 7.70296 2.17025 9.37546 2.17025 12.0538C2.15348 13.9857 2.78268 15.8678 3.95793 17.4012C5.13317 18.9345 6.78706 20.0313 8.65692 20.5172C9.22031 20.6542 9.79534 20.7379 10.3744 20.7672C10.5555 20.7901 10.7377 20.802 10.9202 20.803C11.016 20.803 11.1094 20.7947 11.2027 20.7888C13.4728 20.7205 15.627 19.7703 17.2079 18.1397C18.7888 16.5091 19.6721 14.3266 19.6702 12.0555C19.6702 8.47713 17.3144 6.47713 14.5869 4.16046ZM11.0869 19.1222C11.0035 19.1222 10.9202 19.1305 10.8319 19.1297C10.0818 19.1067 9.37007 18.7931 8.84696 18.2551C8.32386 17.7171 8.03039 16.9967 8.02858 16.2463C8.02858 15.1897 8.59525 14.663 9.87775 13.5713C10.2011 13.2963 10.5527 12.9972 10.9227 12.6547C11.2469 12.9488 11.5619 13.2155 11.8527 13.463C13.141 14.5563 13.8135 15.1772 13.8135 16.2438C13.8121 16.9809 13.529 17.6896 13.0221 18.2247C12.5151 18.7598 11.8228 19.0809 11.0869 19.1222ZM15.2702 17.6463L15.2535 17.658C15.4031 17.2023 15.4796 16.7259 15.4802 16.2463C15.4802 14.3588 14.2419 13.3072 12.9319 12.1947C12.4677 11.8013 11.9885 11.3947 11.5102 10.9163L10.9202 10.3272L10.3311 10.9163C9.79108 11.4555 9.26275 11.9055 8.79691 12.3022C7.49025 13.4138 6.36108 14.3747 6.36108 16.2463C6.36286 16.7465 6.44733 17.2429 6.61108 17.7155C5.74363 17.0494 5.04189 16.1918 4.56066 15.2097C4.07943 14.2276 3.83173 13.1475 3.83692 12.0538C3.82321 10.5915 4.3892 9.18323 5.41108 8.13713C5.5871 8.49423 5.79577 8.83429 6.03442 9.15296C6.20872 9.38816 6.44803 9.56722 6.72286 9.66806C6.99769 9.7689 7.29602 9.78711 7.58108 9.72046C7.87107 9.6559 8.13633 9.50918 8.34514 9.29786C8.55396 9.08653 8.69749 8.81953 8.75858 8.52879C9.10751 6.6135 9.86218 4.79502 10.9719 3.19546C11.851 4.02879 12.7219 4.76629 13.5077 5.43379C16.1177 7.65046 18.0077 9.25213 18.0077 12.0588C18.0097 13.1377 17.7639 14.2026 17.2891 15.1714C16.8143 16.1402 16.1241 16.9869 15.2702 17.6463Z"
-                                  fill="#027DCB"
-                                />
-                              </g>
-                            </g>
-                          </g>
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_920_2298">
-                            <rect
-                              width="20"
-                              height="21"
-                              fill="white"
-                              transform="translate(0.919922 0.25)"
-                            />
-                          </clipPath>
-                          <clipPath id="clip1_920_2298">
-                            <rect
-                              width="20"
-                              height="21"
-                              fill="white"
-                              transform="translate(0.919922 0.25)"
-                            />
-                          </clipPath>
-                          <clipPath id="clip2_920_2298">
-                            <rect
-                              width="20"
-                              height="21"
-                              fill="white"
-                              transform="translate(0.919922 0.25)"
-                            />
-                          </clipPath>
-                        </defs>
-                      </svg>
-
-                      <h4 className="text-[16px] font-[700] text-[#253D4E]">
-                        Deals
-                      </h4>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex md:mt-0 mt-2 items-center gap-4">
-                  <svg
-                    width="37"
-                    height="39"
-                    viewBox="0 0 37 39"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clip-path="url(#clip0_920_2326)">
-                      <g clip-path="url(#clip1_920_2326)">
-                        <g clip-path="url(#clip2_920_2326)">
-                          <path
-                            d="M31.8584 20.386V18.25C31.8584 14.6696 30.4361 11.2358 27.9044 8.70406C25.3726 6.17232 21.9389 4.75 18.3584 4.75C14.778 4.75 11.3442 6.17232 8.81251 8.70406C6.28076 11.2358 4.85845 14.6696 4.85845 18.25V20.386C3.28519 21.0787 1.99765 22.2909 1.21138 23.8196C0.425111 25.3483 0.187838 27.1006 0.539283 28.7834C0.890728 30.4661 1.80956 31.977 3.14195 33.0632C4.47435 34.1494 6.13943 34.7449 7.85845 34.75H10.8584V19.75H7.85845V18.25C7.85845 15.4652 8.96469 12.7945 10.9338 10.8254C12.903 8.85625 15.5737 7.75 18.3584 7.75C21.1432 7.75 23.8139 8.85625 25.7831 10.8254C27.7522 12.7945 28.8584 15.4652 28.8584 18.25V19.75H25.8584V31.75H19.8584V34.75H28.8584C30.5775 34.7449 32.2425 34.1494 33.5749 33.0632C34.9073 31.977 35.8262 30.4661 36.1776 28.7834C36.5291 27.1006 36.2918 25.3483 35.5055 23.8196C34.7192 22.2909 33.4317 21.0787 31.8584 20.386ZM7.85845 31.75C6.66497 31.75 5.52038 31.2759 4.67647 30.432C3.83255 29.5881 3.35845 28.4435 3.35845 27.25C3.35845 26.0565 3.83255 24.9119 4.67647 24.068C5.52038 23.2241 6.66497 22.75 7.85845 22.75V31.75ZM28.8584 31.75V22.75C30.0519 22.75 31.1965 23.2241 32.0404 24.068C32.8843 24.9119 33.3584 26.0565 33.3584 27.25C33.3584 28.4435 32.8843 29.5881 32.0404 30.432C31.1965 31.2759 30.0519 31.75 28.8584 31.75Z"
-                            fill="#253D4E"
-                          />
-                        </g>
-                      </g>
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_920_2326">
-                        <rect
-                          width="36"
-                          height="38"
-                          fill="white"
-                          transform="translate(0.359375 0.75)"
-                        />
-                      </clipPath>
-                      <clipPath id="clip1_920_2326">
-                        <rect
-                          width="36"
-                          height="38"
-                          fill="white"
-                          transform="translate(0.359375 0.75)"
-                        />
-                      </clipPath>
-                      <clipPath id="clip2_920_2326">
-                        <rect
-                          width="36"
-                          height="36"
-                          fill="white"
-                          transform="translate(0.359375 1.75)"
-                        />
-                      </clipPath>
-                    </defs>
-                  </svg>
-
                   <div>
-                    <h4 className="text-[#027DCB] text-[26px] font-[700]">
-                      1900 - 888
-                    </h4>
-                    <h4 className="text-[#7E7E7E] text-[12px] font-[500]">
-                      24/7 Support Center
+                    <h4 className="text-center text-[#262626]text-[20px] font-[700] mt-2">
+                      {cat?.category_name}
                     </h4>
                   </div>
                 </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <div>No category available</div>
+            )}
           </div>
         </div>
-      </div> */}
+      </div>
+      <div className="flex justify-center w-full">
+        <div className="max-w-[1500px] w-full md:px-[40px] px-3">
+          <div className="flex justify-center py-7"></div>
+
+          <div className="py-4">
+            <span className="py-3 text-[16px] font-[400]">
+              {" "}
+              Products: {selectedCategory?.category_name || "All"}
+              {/* <span className="text-[21px] font-bold">{searchResult}</span> */}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 ">
+            {!loader ? (
+              filterProducts?.data?.length >= 1 ? (
+                filterProducts?.data?.map((data: any, index: number) => (
+                  <span className=" md:w-full  hover:bg-[#f1f6f9] border-2 bg-gray-200 border-[#E6F1FC] rounded-lg p-2 cursor-pointer">
+                    <span
+                      // onClick={() => toggleWishlist(data)}
+                      className="flex justify-end cursor-pointer"
+                    >
+                      {/* {userWishLists.has(data.id.toString()) ? (
+                          <FaHeart className="text-blue-700" />
+                        ) : ( */}
+                      <FaRegHeart className="text-blue-700" />
+                      {/* )} */}
+                    </span>
+
+                    <NavLink to={`/view-product/${data?.id}`}>
+                      <p
+                        className="mb-2 tracking-tight m-2 rounded-lg p-2 bg-[#F4FBFF] h-44"
+                        style={{
+                          fontSize: "16px",
+                          color: "#595959",
+                          backgroundImage: `url(${data?.product_images[0]})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center center",
+                        }}
+                      ></p>
+                      <div className="px-3">
+                        <h5 className="text-[18px] pb-1 font-semibold text-gray-900 ">
+                          {data?.product_name}
+                        </h5>
+                        <p> {data?.cost_price}</p>
+                      </div>
+                      <div>
+                        {/* {data?.is_under_deal ? (
+                            <div className="flex flex-col">
+                              <span className="line-through mr-2 text-gray-500">
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "NGN",
+                                }).format(data?.original_price)}
+                              </span>
+                              <h3 className="text-[16px] font-semibold">
+                                NGN{data?.discounted_price}
+                              </h3>
+                            </div>
+                          ) : (
+                            <h3 className="text-[16px] font-semibold pt-2">
+                              {new Intl.NumberFormat("en-US", {
+                                style: "currency",
+                                currency: "NGN",
+                              }).format(data?.product_price)}{" "}
+                            </h3>
+                          )} */}
+                      </div>
+
+                      {/* <div className="flex justify-between">
+                          <span className="rounded-[2px] text-[11px] text-[#004F9A] bg-[#E6F1FC] px-1 py-1.5">
+                            same day delivery
+                          </span>
+                        </div> */}
+                    </NavLink>
+                  </span>
+                ))
+              ) : (
+                <div className="md:p-6 min-w-[90vw]">
+                  <div className="flex justify-center items-center mb-4 h-48 bg-gray-300 rounded dark:bg-gray-700"></div>
+                  <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4"></div>
+                  <div className=" bg-gray-400 rounded-full text-center text-white mb-2.5">
+                    {" "}
+                    No Product Availabe
+                  </div>
+
+                  <div className="flex items-center mt-4 space-x-3"></div>
+                </div>
+              )
+            ) : (
+              <div
+                className="p-4 rounded border border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700"
+                style={{ height: "70vh", width: "92vw" }}
+              >
+                <div className="flex justify-center items-center mb-4 h-48 bg-gray-300 rounded dark:bg-gray-400"></div>
+                <div className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-400 w-48 mb-4"></div>
+                <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-400 mb-2.5"></div>
+                <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-400 mb-2.5"></div>
+                <div className="h-2 bg-gray-200 rounded-full dark:bg-gray-400"></div>
+                <div className="flex items-center mt-4 space-x-3"></div>
+                <span className="sr-only">Loading...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 };
 
-export default Navbar;
+export default Products;

@@ -57,13 +57,13 @@ const Footer = () => {
             </div>
           </div>
           <div className="lg:hidden block">
-            <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] md:mt-0 mt-5 mb-3">
+            {/* <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] md:mt-0 mt-5 mb-3">
               Download App
             </h4>
             <div className="flex space-x-3">
               <img src="/images/playstore.png" className="" alt="payments" />
               <img src="/images/appstore.png" className="" alt="payments" />
-            </div>
+            </div> */}
 
             <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] mt-5 mb-3">
               Our Socials
@@ -125,13 +125,13 @@ const Footer = () => {
           </div>
 
           <div className="hidden lg:block">
-            <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] mb-3">
+            {/* <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] mb-3">
               Download App
             </h4>
             <div className="flex space-x-3">
               <img src="/images/playstore.png" className="" alt="payments" />
               <img src="/images/appstore.png" className="" alt="payments" />
-            </div>
+            </div> */}
             <h4 className="text-[#004F9A] text-[16px] md:text-[18px] font-[600] mt-5 mb-3">
               Our Socials
             </h4>
@@ -161,7 +161,7 @@ const Footer = () => {
             className=" bg-[#004F9A] text-white font-normal px-8 py-1.5 lg:rounded-[70px] rounded-[5px]  items-center justify-center align-center"
             type="button"
           >
-            Give Us Feedback
+            Contact Us
           </NavLink>
         </div>
       </div>
@@ -177,7 +177,7 @@ const Footer = () => {
               className=" bg-[#004F9A] text-white font-normal px-20 py-2  rounded-full  items-center justify-center align-center"
               type="button"
             >
-              Give Us Feedback
+              Contact Us
             </NavLink>
           </div>
         </div>
@@ -187,12 +187,12 @@ const Footer = () => {
       <div className=" bg-[#004F9A] py-4 lg:px-16 px-4">
         <div className="md:flex hidden items-center justify-between">
           <div className="flex flex-col md:flex-row md:space-x-6  items-center text-center">
-            <NavLink to={"/privacy-policy"}>
-              <h3 className="text-[14px] text-white">Privacy</h3>
+            <NavLink to={"/user/about-us"}>
+              <h3 className="text-[14px] text-white"> About Us</h3>
             </NavLink>
-            <NavLink to={"/terms-and-condition"}>
+            {/* <NavLink to={"/terms-and-condition"}>
               <h3 className="text-[14px] text-white">Terms and Condition</h3>
-            </NavLink>
+            </NavLink> */}
             <NavLink to={"/refund-policy"}>
               <h3 className="text-[14px] text-white">Refund Policy</h3>
             </NavLink>
@@ -208,13 +208,13 @@ const Footer = () => {
           <div>
             <div className="flex flex-col lg:flex-row lg:space-x-6 gap-y-2 items-center text-center">
               <NavLink to={"/privacy-policy"}>
-                <h3 className="text-[14px] text-white">Privacy</h3>
+                <h3 className="text-[14px] text-white">About Us</h3>
               </NavLink>
-              <NavLink to={"/terms-and-condition"}>
+              {/* <NavLink to={"/terms-and-condition"}>
                 <h3 className="text-[14px] text-white">
                   Terms and Condition
                 </h3>
-              </NavLink>
+              </NavLink> */}
               <NavLink to={"/refund-policy"}>
                 <h3 className="text-[14px] text-white">Refund Policy</h3>
               </NavLink>
