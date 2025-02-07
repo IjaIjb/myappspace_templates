@@ -357,7 +357,7 @@ const CardUpdateProfile = () => {
                     placeholder="Enter Delivery Address"
                     name="address"
                     required
-                    value={address}
+                    // value={address}
                     // onChange={(e) => handleInputChange(e)}
                   // placeholder="Enter your address"
                   // onChange={() => handleChange}
