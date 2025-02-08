@@ -8,23 +8,30 @@ import { useNavigate } from "react-router-dom";
 const Categories = () => {
   const navigate = useNavigate();
   // const [filterProducts, setFilteredProducts] = React.useState<any>([]);
-  // const [loader, setLoader] = React.useState<boolean>(false);
+  const [loader, setLoader] = React.useState<boolean>(false);
 
   const [categories, setCategories] = React.useState<any>([]);
   // const carouselRefTwo = useRef<any>(null);
   const storeCode = "31958095";
 
   React.useEffect(() => {
+    setLoader(true)
     UserApis.getCategory(storeCode)
       .then((response) => {
         if (response?.data) {
           // console?.log(response?.data);
           setCategories(response?.data);
+    setLoader(false)
+
         } else {
           // dispatch(login([]))
+    setLoader(false)
+
         }
       })
       .catch(function (error) {});
+    // setLoader(false)
+
   }, [storeCode]);
 
   // console.log(categories)
@@ -100,7 +107,16 @@ const Categories = () => {
   };
   return (
     <div className="pt-4">
-      <div className="bg-gray-200 w-full py-3">
+      {loader ? (
+         <div className=" shadow animate-pulse " >
+         <div className="flex justify-center items-center mb-4 h-16 bg-gray-300 rounded dark:bg-gray-400">
+       
+         </div>
+       
+         {/* <span className="sr-only">Loading...</span> */}
+       </div> 
+      ) : (
+        <div className="bg-gray-200 w-full py-3">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
           <div className="flex justify-between w-full">
             {categories?.categories?.data?.length > 0 ? (
@@ -130,6 +146,8 @@ const Categories = () => {
           </div>
         </div>
       </div>
+      )}
+    
       <div className="flex justify-center w-full">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
           <div className="flex justify-center py-7">

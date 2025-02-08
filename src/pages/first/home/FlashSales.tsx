@@ -9,11 +9,13 @@ import { UserApis } from "../../../apis/userApi/userApi";
 const FlashSales = () => {
   // const navigate = useNavigate();
    const [filterProducts, setFilteredProducts] = React.useState<any>([]);
+   const [loader, setLoader] = React.useState<boolean>(false);
  
   // const [categories, setCategories] = React.useState<any>([]);
   const carouselRefTwo = useRef<any>(null);
 const storeCode= "31958095"
 React.useEffect(() => {
+  
   UserApis.getCategory(storeCode)
     .then((response) => {
       if (response?.data) {
@@ -29,7 +31,7 @@ React.useEffect(() => {
 
    useEffect(() => {
  
-    // setLoader(true);
+    setLoader(true);
  
     // const trimmedSearch = search.trim(); // Ensure search doesn't send unnecessary spaces
     const query = {
@@ -43,11 +45,13 @@ React.useEffect(() => {
         if (response?.data?.products) {
           console.log(response.data.products)
           setFilteredProducts(response?.data?.products); // ✅ Set products correctly
-          // console.log("Fetched Products:", response.data.products);
+    setLoader(false)
+    // console.log("Fetched Products:", response.data.products);
         } else {
           setFilteredProducts([]); // ✅ Prevent undefined issues
           console.log("No products found");
-        }
+    setLoader(false)
+  }
       })
       .catch((error) => {
         // setLoader(false);
@@ -128,7 +132,9 @@ React.useEffect(() => {
               View all
             </div>
           </div>
-          <div className="">
+          {!loader ? (
+            <div>
+      <div className="">
             <Carousel
               ref={carouselRefTwo}
               swipeable={true}
@@ -207,6 +213,70 @@ React.useEffect(() => {
           )}
             </Carousel>
           </div> 
+              </div>
+          ) : (
+            <div>
+  <div className="md:px-8 px-4 w-full animate-pulse pt-[20px] md:pt-[20px] ">
+      <section className=" p-3">
+        <div className=" mx-auto grid md:gap-6 gap-8 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:space-y-0">
+        <div>
+            <div className="border  w-full p-2 rounded-lg border-gray-300">
+              <div className="h-[200px] bg-gray-300 dark:bg-gray-400 border border-gray-300 rounded-lg w-full"></div>
+              <div className="flex justify-center text-center">
+              <div className="h-2.5   mt-3 bg-gray-300 rounded-full dark:bg-gray-400 w-20"></div>
+            </div>
+            </div>
+           
+          </div>
+
+          <div>
+            <div className="border  w-full p-2 rounded-lg border-gray-300">
+              <div className="h-[200px] bg-gray-300 dark:bg-gray-400 border border-gray-300 rounded-lg w-full"></div>
+              <div className="flex justify-center text-center">
+              <div className="h-2.5   mt-3 bg-gray-300 rounded-full dark:bg-gray-400 w-20"></div>
+            </div>
+            </div>
+           
+          </div>
+
+               <div>
+            <div className="border  w-full p-2 rounded-lg border-gray-300">
+              <div className="h-[200px] bg-gray-300 dark:bg-gray-400 border border-gray-300 rounded-lg w-full"></div>
+              <div className="flex justify-center text-center">
+              <div className="h-2.5   mt-3 bg-gray-300 rounded-full dark:bg-gray-400 w-20"></div>
+            </div>
+            </div>
+           
+          </div>
+
+               <div>
+            <div className="border  w-full p-2 rounded-lg border-gray-300">
+              <div className="h-[200px] bg-gray-300 dark:bg-gray-400 border border-gray-300 rounded-lg w-full"></div>
+              <div className="flex justify-center text-center">
+              <div className="h-2.5   mt-3 bg-gray-300 rounded-full dark:bg-gray-400 w-20"></div>
+            </div>
+            </div>
+           
+          </div>
+
+               <div>
+            <div className="border  w-full p-2 rounded-lg border-gray-300">
+              <div className="h-[200px] bg-gray-300 dark:bg-gray-400 border border-gray-300 rounded-lg w-full"></div>
+              <div className="flex justify-center text-center">
+              <div className="h-2.5   mt-3 bg-gray-300 rounded-full dark:bg-gray-400 w-20"></div>
+            </div>
+            </div>
+           
+          </div> 
+
+          
+        </div>
+      </section>
+      <span className="sr-only">Loading...</span>
+    </div>
+              </div>
+          )}
+    
           {/* <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-4 mt-10">
             <div>
               <img
