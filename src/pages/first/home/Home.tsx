@@ -6,6 +6,7 @@ import FlashSales from "./FlashSales";
 import Footer from "../../../components/footer/Footer";
 // import NewArrival from "./NewArrival";
 import Latest from "./Latest";
+import NewArrival from "./NewArrival";
 
 const Home = () => {
   return (
@@ -15,7 +16,7 @@ const Home = () => {
       <Categories />
       <FlashSales />
       <Latest />
-      {/* <NewArrival /> */}
+      <NewArrival />
       <Footer />
     </div>
   );
