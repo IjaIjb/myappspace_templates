@@ -307,6 +307,7 @@ const CartPage = () => {
               }
             });
           }
+          
           window.location.reload();
         })
         .catch(function (error) {
