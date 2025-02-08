@@ -241,11 +241,11 @@ export const SvgElement: React.FunctionComponent<SvgElementProps> = (props: SvgE
                 <path d="M22.625 14.6667L20 12M20 12L17.375 14.6667M20 12V22.6667M14.75 18.2222H13V26.2222C13 26.6937 13.1844 27.1459 13.5126 27.4793C13.8408 27.8127 14.2859 28 14.75 28H25.25C25.7141 28 26.1592 27.8127 26.4874 27.4793C26.8156 27.1459 27 26.6937 27 26.2222V18.2222H25.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>;
 
-        case icontypesEnum.DELETE:
-            return <svg viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ maxHeight: '40px', maxWidth: '40px' }}>
-                <rect width="37" height="36" rx="18" fill="#0071BC" />
-                <path d="M13.3571 24.2222C13.3571 25.2 14.1286 26 15.0714 26H21.9286C22.8714 26 23.6429 25.2 23.6429 24.2222V13.5556H13.3571V24.2222ZM24.5 10.8889H21.5L20.6429 10H16.3571L15.5 10.8889H12.5V12.6667H24.5V10.8889Z" fill="white" />
-            </svg>;
+        // case icontypesEnum.DELETE:
+        //     return <svg viewBox="0 0 37 36" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ maxHeight: '40px', maxWidth: '40px' }}>
+        //         <rect width="37" height="36" rx="18" fill="#0071BC" />
+        //         <path d="M13.3571 24.2222C13.3571 25.2 14.1286 26 15.0714 26H21.9286C22.8714 26 23.6429 25.2 23.6429 24.2222V13.5556H13.3571V24.2222ZM24.5 10.8889H21.5L20.6429 10H16.3571L15.5 10.8889H12.5V12.6667H24.5V10.8889Z" fill="white" />
+        //     </svg>;
 
         case icontypesEnum.PROFILE:
             return <svg width="106" height="106" viewBox="0 0 106 106" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">

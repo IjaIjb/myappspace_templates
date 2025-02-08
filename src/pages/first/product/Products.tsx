@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaRegHeart,
 } from "react-icons/fa6";
@@ -120,7 +120,7 @@ const Products = () => {
       setLoader(false);
       console.error("Error fetching products:", error);
     });
-}, [storeCode, selectedCategory,searchResult, search]);
+}, [storeCode, selectedCategory,searchResult, location?.state?.searchMe, search]);
 
 
   React.useEffect(() => {

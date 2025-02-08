@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 // import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 // import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";

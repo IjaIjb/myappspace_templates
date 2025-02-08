@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../../../components/Navbars/Navbar";
@@ -21,7 +21,7 @@ import { Oval } from "react-loader-spinner";
 // import { UserApis } from "../../../apis/userApi/userApi";
 
 const CartPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const userLoginData = useSelector((state: any) => state.data.login.value);
   const [data, setData] = React.useState([]);
@@ -34,8 +34,8 @@ const CartPage = () => {
   // const searchBoxRef = useRef<any>(null);
   const [loader, setLoader] = React.useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
-console.log(address)
-console.log(selectedAddress)
+  console.log(address);
+  console.log(selectedAddress);
   // const [loading, setLoading] = useState(false);
   const optionCountries = COUNTRYDATA.map((item) => ({
     label: item.name,
@@ -109,7 +109,7 @@ console.log(selectedAddress)
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setUserdata({ ...userData, [name]: value });
   };
 
@@ -134,7 +134,6 @@ console.log(selectedAddress)
     });
   };
 
-  
   const handleSubmit = React.useCallback(
     (e: React.ChangeEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -178,12 +177,22 @@ console.log(selectedAddress)
           console.log(response?.data?.cart_items);
           setData(response?.data?.cart_items);
           // setTotal(response?.data?.total)
+          // let tot = 0;
+          // let totItem = 0;
+          // response?.data?.cart_items?.map((data: any) => {
+          //   tot = tot += data?.quantity * data?.price;
+          //   totItem = totItem += 1;
+          // });
+          // setTotal(tot);
+          // setTotalItem(totItem);
           let tot = 0;
           let totItem = 0;
-          response?.data?.cart_items?.map((data: any) => {
-            tot = tot += data?.quantity * data?.price;
-            totItem = totItem += 1;
+
+          response?.data?.cart_items?.forEach((data: any) => {
+            tot += data?.quantity * data?.price;
+            totItem += 1;
           });
+
           setTotal(tot);
           setTotalItem(totItem);
         } else {
@@ -194,31 +203,29 @@ console.log(selectedAddress)
         // handle error
         console.log("eror");
       });
-  }, []);
+  }, [storeCode]);
 
-
-    React.useEffect(() => {
-      setLoader(true);
-      CartApis.getAllAddress(storeCode)
-        .then((response) => {
-          if (response?.data) {
-            console?.log(response);
-            setAddress(response?.data?.data);
+  React.useEffect(() => {
+    setLoader(true);
+    CartApis.getAllAddress(storeCode)
+      .then((response) => {
+        if (response?.data) {
+          console?.log(response);
+          setAddress(response?.data?.data);
           setLoader(false);
-
-          } else {
-            // dispatch(login([]))
-          }
-        })
-        .catch(function (error) {});
-    }, [storeCode]);
+        } else {
+          // dispatch(login([]))
+        }
+      })
+      .catch(function (error) {});
+  }, [storeCode]);
 
   // console.log(address)
   const addCartCount = React.useCallback(
     (productInfo: any) => {
-      if (!userLoginData?.data?.id) {
-        navigate("/sign-in");
-      }
+      // if (!userLoginData?.data?.id) {
+      //   navigate("/sign-in");
+      // }
       let data = {
         product_id: productInfo?.product_id,
         // product_price: productInfo?.price, // Ensure price is a number
@@ -232,12 +239,22 @@ console.log(selectedAddress)
             CartApis.getCart(storeCode).then((response) => {
               if (response?.data) {
                 setData(response?.data?.cart_items);
+                // let tot = 0;
+                // let totItem = 0;
+                // response?.data?.cart_items?.map((data: any) => {
+                //   tot = tot += data?.quantity * data?.price;
+                //   totItem = totItem += 1;
+                // });
+                // setTotal(tot);
+                // setTotalItem(totItem);
                 let tot = 0;
                 let totItem = 0;
-                response?.data?.cart_items?.map((data: any) => {
-                  tot = tot += data?.quantity * data?.price;
-                  totItem = totItem += 1;
+
+                response?.data?.cart_items?.forEach((data: any) => {
+                  tot += data?.quantity * data?.price;
+                  totItem += 1;
                 });
+
                 setTotal(tot);
                 setTotalItem(totItem);
               }
@@ -245,7 +262,6 @@ console.log(selectedAddress)
             window.location.reload();
           }
           window.location.reload();
-
         })
         .catch(function (error) {
           // handle error
@@ -254,7 +270,7 @@ console.log(selectedAddress)
         })
         .finally(() => {});
     },
-    [data, userLoginData, total, storeCode, totalItem]
+    [storeCode]
   );
 
   const reduceCartCount = React.useCallback(
@@ -262,7 +278,6 @@ console.log(selectedAddress)
       // if (!userLoginData?.data?.id) {
       //   navigate("/sign-in");
       // }
-    
 
       CartApis.reduceCart(storeCode, productInfo?.product_id)
         .then((response) => {
@@ -270,21 +285,29 @@ console.log(selectedAddress)
             CartApis.getCart(storeCode).then((response) => {
               if (response?.data) {
                 setData(response?.data?.cart_items);
+                // let tot = 0;
+                // let totItem = 0;
+                // response?.data?.cart_items?.map((data: any) => {
+                //   tot = tot += data?.quantity * data?.price;
+                //   totItem = totItem += 1;
+                // });
+
+                // setTotal(tot);
+                // setTotalItem(totItem);
                 let tot = 0;
                 let totItem = 0;
-                response?.data?.cart_items?.map((data: any) => {
-                  tot = tot += data?.quantity * data?.price;
-                  totItem = totItem += 1;
+
+                response?.data?.cart_items?.forEach((data: any) => {
+                  tot += data?.quantity * data?.price;
+                  totItem += 1;
                 });
 
                 setTotal(tot);
                 setTotalItem(totItem);
               }
-
             });
           }
           window.location.reload();
-
         })
         .catch(function (error) {
           // handle error
@@ -293,38 +316,43 @@ console.log(selectedAddress)
         })
         .finally(() => {});
     },
-    [data, userLoginData, total, storeCode, totalItem]
+    [storeCode]
   );
 
   const deleteItem = React.useCallback(
-    (productInfo:any) => {
+    (productInfo: any) => {
       // if (!userLoginData?.id) {
       //   navigate("/sign-in");
       // }
 
       CartApis.deleteCart(storeCode, productInfo?.id)
         .then((response) => {
-          console.log(response)
+          console.log(response);
           if (response?.data) {
-            CartApis.getCart(storeCode)
-            .then((response: AxiosResponse<any>) => {
-            
-                console.log(response?.data?.cart_items);
-                setData(response?.data?.cart_items);
-                // setTotal(response?.data?.total)
-                let tot = 0;
-                let totItem = 0;
-                response?.data?.cart_items?.map((data: any) => {
-                  tot = tot += data?.quantity * data?.price;
-                  totItem = totItem += 1;
-                });
-                setTotal(tot);
-                setTotalItem(totItem);
-            window.location.reload();
+            CartApis.getCart(storeCode).then((response: AxiosResponse<any>) => {
+              console.log(response?.data?.cart_items);
+              setData(response?.data?.cart_items);
+              // let tot = 0;
+              // let totItem = 0;
+              // response?.data?.cart_items?.map((data: any) => {
+              //   tot = tot += data?.quantity * data?.price;
+              //   totItem = totItem += 1;
+              // });
+              // setTotal(tot);
+              // setTotalItem(totItem);
+              let tot = 0;
+              let totItem = 0;
 
-            
-              
-            })
+              response?.data?.cart_items?.forEach((data: any) => {
+                tot += data?.quantity * data?.price;
+                totItem += 1;
+              });
+
+              setTotal(tot);
+              setTotalItem(totItem);
+
+              window.location.reload();
+            });
 
             toast.success("deleted Successfully");
             window.location.reload();
@@ -337,7 +365,7 @@ console.log(selectedAddress)
         })
         .finally(() => {});
     },
-    [data, userLoginData, total, totalItem]
+    [storeCode]
   );
 
   const handlePayment = async () => {
@@ -365,7 +393,7 @@ console.log(selectedAddress)
       const response = await CartApis.makePayment(storeCode, paymentData);
       console.log("Payment successful", response);
       if (response?.data) {
-        window.location.replace(response.data.paymentLink)
+        window.location.replace(response.data.paymentLink);
       }
       // Handle success (e.g., redirect, show message, etc.)
     } catch (err) {
@@ -459,10 +487,16 @@ console.log(selectedAddress)
                           backgroundPosition: "center center",
                         }}
                       >
-                       <img src={cart?.product?.product_images[0]} className=" w-fit" alt="" /> 
+                        <img
+                          src={cart?.product?.product_images[0]}
+                          className=" w-fit"
+                          alt=""
+                        />
                       </span>
 
-                      <span className="mt-3">{cart?.product?.product_name}</span>
+                      <span className="mt-3">
+                        {cart?.product?.product_name}
+                      </span>
                     </div>
 
                     <span className="mt-3">
@@ -669,7 +703,7 @@ console.log(selectedAddress)
                 </h3>
                 {address && address?.length > 0 ? (
                   <form className="flex flex-col pb-3 gap-4">
-                    {address?.map((store:any) => (
+                    {address?.map((store: any) => (
                       <div className="flex gap-3 items-center" key={store.id}>
                         <label className="flex gap-3 items-center">
                           <input
@@ -677,11 +711,11 @@ console.log(selectedAddress)
                             name="store"
                             value={store?.id} // Use store ID as the value
                             onChange={() => setSelectedAddress(store.id)}
-                            checked={selectedAddress === store?.id}// onChange={(e) => handleStoreSelection(e, store)}
+                            checked={selectedAddress === store?.id} // onChange={(e) => handleStoreSelection(e, store)}
 
                             // checked={selectedStore?.id === store?.id} // Ensure it's checked when selected
                           />
-                          {store?.address_name} 
+                          {store?.address_name}
                         </label>
                       </div>
                     ))}
@@ -716,38 +750,38 @@ console.log(selectedAddress)
               <hr className="my-3" />
 
               <button
-                    type="button"
-                    onClick={handlePayment}
-                    // disabled={
-                    //   !selectedPaymentMethod ||
-                    //   !selectedStore ||
-                    //   loader ||
-                    //   !selectedDeliveryMethod ||
-                    //   total === 0
-                    // }
-                    className="mt-2 w-full disabled:bg-[#5c5c5c] text-white bg-[#0071BC] hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                  >
-                    <span className="flex justify-center">
-                      <span>
-                        {loader ? (
-                          <Oval
-                            visible={loader}
-                            height="20"
-                            width="80"
-                            color="white"
-                            secondaryColor="#E6F1FC"
-                            ariaLabel="oval-loading"
-                            wrapperStyle={{}}
-                            wrapperClass=""
-                          />
-                        ) : (
-                          "Proceed"
-                        )}
-                      </span>
+                type="button"
+                onClick={handlePayment}
+                // disabled={
+                //   !selectedPaymentMethod ||
+                //   !selectedStore ||
+                //   loader ||
+                //   !selectedDeliveryMethod ||
+                //   total === 0
+                // }
+                className="mt-2 w-full disabled:bg-[#5c5c5c] text-white bg-[#0071BC] hover:bg-blue-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                <span className="flex justify-center">
+                  <span>
+                    {loader ? (
+                      <Oval
+                        visible={loader}
+                        height="20"
+                        width="80"
+                        color="white"
+                        secondaryColor="#E6F1FC"
+                        ariaLabel="oval-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    ) : (
+                      "Proceed"
+                    )}
+                  </span>
 
-                      <span></span>
-                    </span>
-                  </button>
+                  <span></span>
+                </span>
+              </button>
               {/* Delivery Method */}
               {/* {selectedStore && (
                 <div>

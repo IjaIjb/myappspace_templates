@@ -1,7 +1,5 @@
 import { AxiosPromise } from "axios";
 import configs from "../../configs";
-
-import { UserLiveApis } from "../live/userLive/userLiveApis";
 import { CartLiveApis } from "../live/userLive/cartLiveApis";
 
 

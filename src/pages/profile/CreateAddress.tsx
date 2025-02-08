@@ -84,7 +84,7 @@ const CreateAddress = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setUserdata({ ...userData, [name]: value });
   };
 
@@ -141,7 +141,7 @@ const CreateAddress = () => {
           toast.error("Offfline");
         });
     },
-    [userData]
+    [userData, navigate]
   );
 
   return (

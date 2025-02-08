@@ -1,9 +1,9 @@
 import React from 'react'
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const CardWishlist = () => {
 
-  const [searchText, setSearchText] = React.useState('');
+  // const [searchText, setSearchText] = React.useState('');
 
   return (
     <>
@@ -20,7 +20,8 @@ const CardWishlist = () => {
                 </div>
                 <input type="text" 
                 // onClick={() => paginator('')} 
-                onChange={e => setSearchText(e.target.value)} placeholder='search...' id="simple-search" className=" border border-gray-300 text-gray-500 text-sm rounded-md block w-full pl-4 p-1  " required />
+                // onChange={e => setSearchText(e.target.value)}
+                 placeholder='search...' id="simple-search" className=" border border-gray-300 text-gray-500 text-sm rounded-md block w-full pl-4 p-1  " required />
               </div>
 
               <div className='mt-0.5 ml-2'><button type='button'

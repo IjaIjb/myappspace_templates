@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaEyeSlash, FaEye } from "react-icons/fa";
 import { Dispatch } from "redux";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { login } from '../../reducer/loginSlice'
-import { AxiosResponse, AxiosError } from "axios";
-import axios from "axios";
-import { store } from "../../store/store";
-import { History } from "history";
+import { AxiosResponse } from "axios";
+// import axios from "axios";
+// import { store } from "../../store/store";
+// import { History } from "history";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from "../Navbars/Navbar";
+// import Navbar from "../Navbars/Navbar";
 import { UserApis } from "../../apis/userApi/userApi";
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ function Login() {
 
 
   // How to access the redux store
-  const userLoginData = useSelector((state: any) => state.data.login.value);
+  // const userLoginData = useSelector((state: any) => state.data.login.value);
   const storeCode = "31958095";
 
   // This is used to update the store
@@ -41,10 +41,7 @@ function Login() {
     formData.append('login', email)
     formData.append('password', password)
 
-    const record = {
-      email,
-      password,
-    };
+ 
 
     let data = JSON.stringify({
       login: email,
