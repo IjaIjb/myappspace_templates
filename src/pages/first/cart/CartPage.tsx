@@ -27,15 +27,17 @@ const CartPage = () => {
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [totalItem, setTotalItem] = React.useState(0);
-  console.log(userLoginData);
+  // console.log(userLoginData);
   const [visible2, setVisible2] = React.useState(false);
   const [address, setAddress] = React.useState([]);
   // const [suggestions, setSuggestions] = useState([]);
   // const searchBoxRef = useRef<any>(null);
   const [loader, setLoader] = React.useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
-  console.log(address);
-  console.log(selectedAddress);
+  // console.log(address);
+  // console.log(selectedAddress);
+  const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
+
   // const [loading, setLoading] = useState(false);
   const optionCountries = COUNTRYDATA.map((item) => ({
     label: item.name,
@@ -150,7 +152,7 @@ const CartPage = () => {
 
       CartApis.addAddress(storeCode, formData)
         .then((response: any) => {
-          console.log(response);
+          // console.log(response);
           if (response?.data?.status === true) {
             toast.success("address successfuly added");
             window.location.reload();
@@ -174,7 +176,7 @@ const CartPage = () => {
     CartApis.getCart(storeCode)
       .then((response: AxiosResponse<any>) => {
         if (response?.data) {
-          console.log(response?.data?.cart_items);
+          // console.log(response?.data?.cart_items);
           setData(response?.data?.cart_items);
           // setTotal(response?.data?.total)
           // let tot = 0;
@@ -210,7 +212,7 @@ const CartPage = () => {
     CartApis.getAllAddress(storeCode)
       .then((response) => {
         if (response?.data) {
-          console?.log(response);
+          // console?.log(response);
           setAddress(response?.data?.data);
           setLoader(false);
         } else {
@@ -307,7 +309,6 @@ const CartPage = () => {
               }
             });
           }
-          
           window.location.reload();
         })
         .catch(function (error) {
@@ -328,10 +329,10 @@ const CartPage = () => {
 
       CartApis.deleteCart(storeCode, productInfo?.id)
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           if (response?.data) {
             CartApis.getCart(storeCode).then((response: AxiosResponse<any>) => {
-              console.log(response?.data?.cart_items);
+              // console.log(response?.data?.cart_items);
               setData(response?.data?.cart_items);
               // let tot = 0;
               // let totItem = 0;
@@ -376,7 +377,7 @@ const CartPage = () => {
     const paymentData = {
       // cart_token: "abc123xyz",
       customer_address_id: selectedAddress,
-      payment_method: "flutterwave",
+      // payment_method: "flutterwave",
       delivery_method: "standard",
       // coupon_code: "DISCOUNT10",
       // recipient_name: userLoginData?.name,
@@ -392,9 +393,10 @@ const CartPage = () => {
 
     try {
       const response = await CartApis.makePayment(storeCode, paymentData);
-      console.log("Payment successful", response);
+      // console.log("Payment successful", response);
       if (response?.data) {
-        window.location.replace(response.data.paymentLink);
+        window.location.replace(response.data.paymentLink.data.link);
+        console.log(response.data)
       }
       // Handle success (e.g., redirect, show message, etc.)
     } catch (err) {
@@ -501,15 +503,11 @@ const CartPage = () => {
                     </div>
 
                     <span className="mt-3">
-                      {userLoginData?.data
-                        ? new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: "NGN",
-                          }).format(
+{selectedCurrency}{" "}
+                      { (
                             Number(cart?.price?.replace(/,/g, "")) *
                               cart?.quantity || 0.0
-                          )
-                        : "0.0"}
+                          )}
                     </span>
                   </Link>
 
@@ -567,12 +565,9 @@ const CartPage = () => {
                 <span>Sub Total</span>
                 <span className=" font-[200] text-[13px]">
                   ({totalItem} Items)&nbsp;&nbsp;{" "}
-                  {userLoginData?.data
-                    ? new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "NGN",
-                      }).format(total ? total : 0.0)
-                    : "0.0"}{" "}
+                  {selectedCurrency} { new Intl.NumberFormat("en-US", {
+
+                      }).format(total ? total : 0.0)}{" "}
                 </span>
               </div>
 
@@ -596,11 +591,9 @@ const CartPage = () => {
               <div className="flex justify-between my-3">
                 <span>Estimated Total</span>
                 <span>
-                  {" "}
-                  {userLoginData?.data
-                    ? new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "NGN",
+                {selectedCurrency} {" "}
+                  { new Intl.NumberFormat("en-US", {
+                      
                       }).format(
                         total
                           ? total
@@ -610,8 +603,7 @@ const CartPage = () => {
                             //       ? location
                             //       : 0.0)
                             0.0
-                      )
-                    : "0.0"}
+                      )}
                 </span>
               </div>
               {/* <div className="relative w-full lg:w-12/12">

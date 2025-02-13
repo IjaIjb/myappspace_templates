@@ -14,12 +14,14 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { UserApis } from "../../apis/userApi/userApi";
 // import { Listbox } from "@headlessui/react";
-import { Menu, Transition } from "@headlessui/react";
-import { IoIosArrowDown } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { setCurrency } from "../../store/stateSlice";
+import NavCurrency from "./NavCurrency";
 
 const Navbar = () => {
   // const dispatch: Dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const userLoginData = useSelector((state:any) => state.data.login.value);
   const [search, setSearch] = React.useState('');
 
@@ -36,9 +38,16 @@ const Navbar = () => {
     CartApis.getCart(storeCode).then(
         (response: AxiosResponse<any>) => {
             if (response?.data) {
-                console.log(response?.data)
-                setname(response?.data?.cart_items.length);
+                console.log(response?.data.cart_items)
+                const totalQuantity = response?.data?.cart_items.reduce(
+                  (sum: number, item: any) => sum + Number(item.quantity),
+                  0
+                );
+        
+                setname(totalQuantity); 
+                // setname(response?.data?.cart_items.length);
                 // setTotal(response?.data?.total)
+                
             } else {
                 // dispatch(login([]))
             }
@@ -49,21 +58,23 @@ const Navbar = () => {
     })
 
 }, []);
-
+const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
+// console.log(name)
   React.useEffect(() => {
     UserApis.fetchStoreData(storeCode).then((response) => {
       if (response?.data) {
-        console.log(response.data);
+        // console.log(response.data);
         // setStoreData(response?.data?.store);
         setStoreCurrency(response?.data?.configs.settings);
+        setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
+        dispatch(setCurrency(response?.data?.configs.settings?.default_currency || ""));
 
  
       }
     });
   }, [storeCode]);
-console.log(storeCurrency)
+// console.log(storeCurrency)
 
-const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
 const logOut = () => {
   // dispatch(login([]))
   // navigate("/sign-in");
@@ -83,19 +94,19 @@ const logOut = () => {
 };
 
 
-  React.useEffect(() => {
-    CartApis.getSelectedCurrency(storeCode).then((response) => {
-      if (response?.data) {
-        console.log(response.data);
-        // setGetSingleProduct(response?.data?.product);
+  // React.useEffect(() => {
+  //   CartApis.getSelectedCurrency(storeCode).then((response) => {
+  //     if (response?.data) {
+  //       console.log(response.data);
+  //       // setGetSingleProduct(response?.data?.product);
 
  
-      }
-    });
-  }, [storeCode]);
+  //     }
+  //   });
+  // }, [storeCode]);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the form from submitting by default
-
+// console.log(search)
     if (search.trim() !== '') {
         navigate('/product', { state: { searchMe: search } });
     } else {
@@ -104,49 +115,7 @@ const logOut = () => {
   };
   return (
     <div>
-      <div className="bg-gray-200 py-2">
-      <div className="flex justify-center w-full ">
-      <div className="max-w-[1500px] w-full px-3">
-<div className="">
-<Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="bg-gray-100 flex gap-2 items-center text-black px-3 py-[2px] rounded-md border border-gray-300 hover:bg-gray-200">
-          {selectedCurrency}
-          <IoIosArrowDown />
-        </Menu.Button>
-      </div>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items className="absolute left-5 mt-2 z-50 w-40 bg-white border border-gray-200 shadow-lg rounded-md overflow-hidden">
-          {storeCurrency?.currencies?.map((currency:any) => (
-            <Menu.Item key={currency}>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "bg-gray-200" : "bg-white"
-                  } w-full px-4 py-2  text-left text-black`}
-                  onClick={() => setSelectedCurrency(currency)}
-                >
-                  {currency}
-                </button>
-              )}
-            </Menu.Item>
-          ))}
-        </Menu.Items>
-      </Transition>
-    </Menu>
-</div>
-        </div>
-      </div>
-      </div>
+   <NavCurrency />
       <nav className="hidden md:block border-b">
         <div className="flex justify-center w-full ">
           <div className="max-w-[1500px] w-full">
@@ -410,11 +379,11 @@ const logOut = () => {
       <nav className=" block md:hidden border-b pr-3">
         <div className="flex items-center justify-between py-4 ">
           <div
-            className={`items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow bg-[#0071BC] absolute top-0 left-0 right-0 h-auto z-3 rounded transition-transform duration-500 ${
+            className={`items-stretch md:opacity-100 md:relative md:mt-4 z-50 md:shadow-none shadow bg-[#0071BC] absolute top-0 left-0 right-0 h-auto z-3 rounded transition-transform duration-500 ${
               collapseShow === "hidden"
                 ? "-translate-x-full"
                 : "p-5 mr-5 translate-x-0"
-            }`}
+            }`} 
           >
             {/* Collapse header */}
             <div className="md:min-w-full md:hidden block pb-1 mb-4  ">

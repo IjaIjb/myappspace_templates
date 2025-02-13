@@ -3,6 +3,10 @@ import React, { useEffect, useRef } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { UserApis } from "../../../apis/userApi/userApi";
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { CartApis } from "../../../apis/userApi/cartApis";
 // import { useNavigate } from "react-router-dom";
 
 
@@ -11,6 +15,7 @@ const FlashSales = () => {
    const [filterProducts, setFilteredProducts] = React.useState<any>([]);
    const [loader, setLoader] = React.useState<boolean>(false);
  
+  
   // const [categories, setCategories] = React.useState<any>([]);
   const carouselRefTwo = useRef<any>(null);
 const storeCode= "31958095"
@@ -27,37 +32,59 @@ React.useEffect(() => {
     })
     .catch(function (error) {});
 }, [storeCode]);
+const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
+
+  //     const [selectedCurrency, setSelectedCurrency] = React.useState<any>(null);
 
 
-   useEffect(() => {
+  //        React.useEffect(() => {
+  //   CartApis.getSelectedCurrency(storeCode).then((response) => {
+  //     if (response?.data) {
+  //       // console.log(response.data);
+  //       setSelectedCurrency(response?.data?.selected_currency);
+
  
+  //     }
+  //   });
+  // }, [storeCode]);
+
+  console.log(selectedCurrency)
+
+  useEffect(() => {
     setLoader(true);
- 
-    // const trimmedSearch = search.trim(); // Ensure search doesn't send unnecessary spaces
+  
     const query = {
       search: "",
       category_id: "",
     };
-
+  
     UserApis.getProduct(storeCode, query)
       .then((response) => {
-        // setLoader(false);
+        setLoader(false);
         if (response?.data?.products) {
-          console.log(response.data.products)
-          setFilteredProducts(response?.data?.products); // ✅ Set products correctly
-    setLoader(false)
-    // console.log("Fetched Products:", response.data.products);
+          // console.log(response.data.products);
+  
+          // Map products to parse and extract price based on selectedCurrency
+          const updatedProducts = response.data.products.map((product: any) => {
+            const parsedSellingPrice = JSON.parse(product.selling_price || "{}");
+            return {
+              ...product,
+              display_price: parsedSellingPrice[selectedCurrency] || "0", // Fallback in case currency doesn't exist
+            };
+          });
+  
+          setFilteredProducts(updatedProducts); // ✅ Update state with modified prices
         } else {
           setFilteredProducts([]); // ✅ Prevent undefined issues
           console.log("No products found");
-    setLoader(false)
-  }
+        }
       })
       .catch((error) => {
-        // setLoader(false);
         console.error("Error fetching products:", error);
       });
-  }, [storeCode, ]);
+  }, [storeCode, selectedCurrency]); // ✅ Depend on selectedCurrency
+  
+
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -78,7 +105,7 @@ React.useEffect(() => {
     },
   };
 
-  
+  // console.log(filterProducts)
   // Function to manually trigger left navigation
   // const handlePrevClickOne = () => {
   //   carouselRefTwo.current.previous();
@@ -100,7 +127,7 @@ React.useEffect(() => {
 
   return (
     <div>
-      <div className="flex justify-center w-full mt-10">
+      <div className="flex justify-center w-full ">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
           <div className="flex items-center justify-between pb-5">
             <div className="lg:flex gap-4">
@@ -178,37 +205,46 @@ React.useEffect(() => {
                 </div>
               )} */}
                 {/* <div className="grid md:grid-cols-4 grid-cols-2 gap-4 mt-10"> */}
-          {filterProducts?.data?.length > 0 ? 
-          filterProducts?.data?.map((prod:any) => (
-  <div className="mr-3 border p-3 rounded-xl">
-  <img
-    src={prod.product_images[0]}
-    className="rounded-[8px] w-full h-[200px] object-contain"
-    alt="mart Logo"
-  />
-  <h4 className="pt-2 text-[#787878] text-[16px] md:text-[20px] font-[600] mt-2">
-    {prod?.product_name}
-  </h4>
-  <img
-    src="/images/star.svg"
-    className="rounded-[8px] my-2 object-contain"
-    alt="mart Logo"
-  />
-  <div className="flex justify-between">
-    {/* <div className="flex gap-2">
-      <h4 className="text-[#C9C9C9] text-[12px] md:text-[16px]  font-[700]">
-        30,300
-      </h4>
-      <h4 className="text-[#424242] text-[18px] md:text-[24px] font-[700]">
-        30,000
-      </h4>
-    </div> */}
-    <h4 className="text-[#787878] text-[10px] md:text-[14px] font-[500]">
-      10% OFF
-    </h4>
-  </div>
-</div>
-          )) : (
+          {filterProducts?.length > 0 ? 
+         filterProducts?.filter((prod: any) => prod.sale_type === "flash") // ✅ Only include products with sale_type
+         .map((prod: any) => (
+                     <div key={prod?.id} className="border rounded-lg mr-3">
+                      <NavLink
+                        to={`/view-product/${prod?.id}`}
+                        className="mr-3  p-3 rounded-xl"
+                      >
+                        <img
+                          src={prod.product_images[0]}
+                          className="rounded-[8px] mb-1 w-full h-[150px] object-contain"
+                          alt="mart Logo"
+                        />
+
+                        <div className="border-t px-2">
+                        <h4 className="pt-2 text-[#787878] text-[16px] md:text-[20px] font-[600] mt-2">
+                          {prod?.product_name}
+                        </h4>
+                        <img
+                          src="/images/star.svg"
+                          className="rounded-[8px] my-2 object-contain"
+                          alt="mart Logo"
+                        />
+                        <div className="flex justify-between">
+                          <div className="flex gap-2">
+                {/* <h4 className="text-[#C9C9C9] text-[12px] md:text-[16px]  font-[700]">
+                  30,300
+                </h4> */}
+                <h4 className="text-[#424242] text-[18px] md:text-[24px] font-[700]">
+                {selectedCurrency} {prod?.display_price}
+                </h4>
+              </div>
+                          {/* <h4 className="text-[#787878] text-[10px] md:text-[14px] font-[500]">
+                            10% OFF
+                          </h4> */}
+                        </div>
+                        </div>
+                      </NavLink>
+                      </div>
+         )) : (
             <div>No product yest</div>
           )}
             </Carousel>

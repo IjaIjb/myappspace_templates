@@ -1,9 +1,11 @@
-import React from "react";
+import React, { Fragment } from "react";
 // import { FaArrowRightLong, FaArrowLeftLong } from "react-icons/fa6";
 // import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { UserApis } from "../../../apis/userApi/userApi";
 import { useNavigate } from "react-router-dom";
+import { Menu, Transition } from "@headlessui/react";
+import { IoMdMore } from "react-icons/io";
 
 const Categories = () => {
   const navigate = useNavigate();
@@ -105,6 +107,12 @@ const Categories = () => {
   const handleProductClick = (product: any) => {
     navigate("/product", { state: { category_name: product } });
   };
+
+  const hasMore = categories?.categories?.data?.length > 6;
+  // const hasMoreMedium = categories?.categories?.data?.length > 4;
+  const hasMoreMobile = categories?.categories?.data?.length > 3;
+
+
   return (
     <div className="pt-4">
       {loader ? (
@@ -118,9 +126,10 @@ const Categories = () => {
       ) : (
         <div className="bg-gray-200 w-full py-3">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
-          <div className="flex justify-between w-full">
+        <div className="lg:hidden block">
+          <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
             {categories?.categories?.data?.length > 0 ? (
-              categories?.categories?.data?.map((cat: any) => (
+              categories?.categories?.data?.slice(0, 3).map((cat: any) => (
                 <div
                   onClick={() => handleProductClick(cat)}
                   key={cat?.id}
@@ -134,7 +143,7 @@ const Categories = () => {
                 /> */}
                   </div>
                   <div>
-                    <h4 className="text-center text-[#262626] text-[20px] font-[700] mt-2">
+                    <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
                       {cat?.category_name}
                     </h4>
                   </div>
@@ -143,7 +152,115 @@ const Categories = () => {
             ) : (
               <div>No category available</div>
             )}
+<div className="">
+{hasMoreMobile && (
+            <Menu as="div" className="relative">
+              <Menu.Button className="flex  items-center px-4 py-2 rounded-lg font-semibold">
+                More 
+                <IoMdMore  className="w-6 h-6"/>
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
+                  {categories?.categories?.data?.slice(3).map((cat: any) => (
+                    <Menu.Item key={cat.id}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => handleProductClick(cat)}
+                          className={`${
+    active ? "bg-gray-100" : ""
+  } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
+                        >
+                          {cat.category_name}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          )}
+  </div>
+
+
+
+
           </div>
+          </div>
+
+          <div className="hidden lg:block">
+          <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
+            {categories?.categories?.data?.length > 0 ? (
+              categories?.categories?.data?.slice(0, 6).map((cat: any) => (
+                <div
+                  onClick={() => handleProductClick(cat)}
+                  key={cat?.id}
+                  className="cursor-pointer"
+                >
+                  <div className="border rounded-lg flex justify-center">
+                    {/* <img
+                  src={cat?.category_image}
+                  className="rounded-[8px] w-[180px] h-[180px] object-contain"
+                  alt="mart Logo"
+                /> */}
+                  </div>
+                  <div>
+                    <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
+                      {cat?.category_name}
+                    </h4>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div>No category available</div>
+            )}
+
+{hasMore && (
+            <Menu as="div" className="relative">
+              <Menu.Button className="bg-gray-300 px-4  rounded-lg font-semibold">
+                More
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
+                  {categories?.categories?.data?.slice(3).map((cat: any) => (
+                    <Menu.Item key={cat.id}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => handleProductClick(cat)}
+                          className={`${
+    active ? "bg-gray-100" : ""
+  } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
+                        >
+                          {cat.category_name}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          )}
+ 
+
+
+          </div>
+
+            </div>
         </div>
       </div>
       )}

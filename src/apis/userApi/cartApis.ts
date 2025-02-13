@@ -47,11 +47,11 @@ export class CartApis {
         }
     } 
 
-    static getCallback(store_code:any, order_id:any, transactionId:any, status: any, ref:any): AxiosPromise<Array<any>> {
+    static getCallback(store_code:any, order_id:any, payment_method:any, status: any, ref:any,transactionId:any,): AxiosPromise<Array<any>> {
         if (configs.type === "LOCAL") {
             return {} as AxiosPromise;
         } else {
-            return this.cartApis.getCallback(store_code, order_id, transactionId, status, ref);
+            return this.cartApis.getCallback(store_code, order_id, payment_method, status, ref,transactionId);
         }
     } 
     static addAddress(storeCode:any, data:any): AxiosPromise<any> {
@@ -69,6 +69,14 @@ export class CartApis {
             return this.cartApis.getAllAddress(storeCode);
         }
     }
+
+    static updateCurrency(storeCode:any, data:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.cartApis.updateCurrency(storeCode, data);
+        }
+    } 
 
     static getSelectedCurrency(storeCode:any): AxiosPromise<any> {
         if (configs.type === "LOCAL") {

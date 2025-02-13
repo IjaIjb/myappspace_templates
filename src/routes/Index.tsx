@@ -15,6 +15,7 @@ const CreateAddressPage = lazy(() => import("../pages/profile/CreateAddress"));
 const AboutPage = lazy(() => import("../pages/first/about/About"));
 const RefundPolicyPage = lazy(() => import("../pages/first/refund/RefunPolicy"));
 const ViewPaymentPage = lazy(() => import("../pages/first/cart/ViewPaymentPage"));
+const ContactPage = lazy(() => import("../pages/first/contact/Contact"));
 
 const routes = [
   {
@@ -72,6 +73,10 @@ const routes = [
   {
     path: "/refund-policy",
     component: RefundPolicyPage,
+  },
+  {
+    path: "/contact",
+    component: ContactPage,
   },
 ];
 

@@ -7,6 +7,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from './store/store';
+import "react-toastify/dist/ReactToastify.css"; 
+import "tippy.js/dist/tippy.css"; 
+import "tippy.js/themes/light.css"; 
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

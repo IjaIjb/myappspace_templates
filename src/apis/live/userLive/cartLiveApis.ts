@@ -55,8 +55,13 @@ export class CartLiveApis extends AxiosGlobal{
         });
     }
 
-    getCallback(store_code:any, order_id:any, transactionId:any, status: any, ref:any): AxiosPromise<Array<any>> {
-        return this.axios.get(`${configs.contextCustomer}/${store_code}/checkout/payment/callback?order_id=${order_id}&transaction_id=${transactionId}&status=${status}&tx_ref=${ref}`, {
+    updateCurrency(store_code:any, data: any): AxiosPromise<Array<any>> {
+        return this.axios.post(`${configs.contextCustomer}/${store_code}/profile/update-currency`, data, {
+            headers: { "Content-Type": "aplication/json", "Accept": "aplication/json", "Authorization": `Bearer ${store.getState().data.login.value.token}`, "Access-Control-Allow-Origin": "*" },
+        });
+    }
+    getCallback(store_code:any, order_id:any,payment_method:any, status: any, ref:any, transactionId:any): AxiosPromise<Array<any>> {
+        return this.axios.get(`${configs.contextCustomer}/${store_code}/checkout/payment/callback?order_id=${order_id}&payment_method=${payment_method}&status=${status}&transaction_ref=${ref}&transaction_id=${transactionId}`, {
             headers: { "Content-Type": "aplication/json", 'mode': 'no-cors', "Accept": "aplication/json", "Authorization": `Bearer ${store.getState().data.login.value.token}`, "Access-Control-Allow-Origin": "*" },
         });
     } 

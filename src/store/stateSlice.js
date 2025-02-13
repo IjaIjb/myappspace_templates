@@ -6,19 +6,22 @@ const stateSlice = createSlice({
       // drawerOpen: false,
       cartData: null, // Set to `null` to handle undefined checks in the component.
       // modalType: '',
-
+      selectedCurrency: "",
     },
   
     reducers: {
       setCartData: (state, action) => {
         state.cartData = action.payload;
       },
-   
+      setCurrency: (state, action) => {
+        state.selectedCurrency = action.payload;
+      },
     },
   });
 
   export const {
-    setCartData
+    setCartData,
+    setCurrency
 
 } = stateSlice.actions;
 

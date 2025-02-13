@@ -7,21 +7,33 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartApis } from "../../../apis/userApi/cartApis";
 import Footer from "../../../components/footer/Footer";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 const ViewProduct = () => {
   const params = useParams();
+  const selectedCurrency = localStorage.getItem("selectedCurrency") || "";
 
   const storeCode = "31958095";
   const [singleProduct, setGetSingleProduct] = React.useState<any>([]);
 
   React.useEffect(() => {
     UserApis.getSingleProduct(storeCode, params?.id).then((response) => {
-      if (response?.data) {
+      if (response?.data?.product) {
         console.log(response.data);
-        setGetSingleProduct(response?.data?.product);
+  
+        // Parse the selling_price JSON
+        const parsedSellingPrice = JSON.parse(response.data.product.selling_price || "{}");
+  
+        // Update the state with the correct price for the selected currency
+        setGetSingleProduct({
+          ...response.data.product,
+          display_price: parsedSellingPrice[selectedCurrency] || "0", // Fallback in case currency doesn't exist
+        });
       }
     });
-  }, [storeCode, params?.id]);
+  }, [storeCode, params?.id, selectedCurrency]); // ✅ Depend on selectedCurrency for dynamic price update
+  
   // console.log(singleProduct)
   const addToCart = React.useCallback((productInfo: any) => {
     const quantity = parseInt(productInfo?.stock_quantity); // Ensure it's an integer
@@ -149,7 +161,18 @@ const ViewProduct = () => {
                 <h3 className="text-[25px] font-[800]">
                   {singleProduct?.product_name}
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div
+                    
+                      className="flex gap-2 p-2 rounded-md bg-white shadow-sm"
+                    >
+                      <span className="font-medium text-gray-700">
+                        {selectedCurrency}:
+                      </span>
+                      <span className="font-bold text-black">
+                        {singleProduct.display_price}
+                      </span>
+                    </div>
+                {/* <div className="grid grid-cols-2 gap-3">
                   {Object.entries(parsedCostPrice).map(([currency, price]) => (
                     <div
                       key={currency}
@@ -163,7 +186,7 @@ const ViewProduct = () => {
                       </span>
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
 
               <div className="">

@@ -2,9 +2,6 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import routes from "./routes/Index";
-import 'react-toastify/dist/ReactToastify.css';  // First
-import 'tippy.js/dist/tippy.css';               // Second
-import 'tippy.js/themes/light.css';             // Third
 
 function App() {
   return (

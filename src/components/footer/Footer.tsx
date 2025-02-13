@@ -157,7 +157,7 @@ const Footer = () => {
         </div>
         <div className="lg:flex hidden justify-center lg:mt-5 lg:mb-0 mb-1">
           <NavLink
-            to={"/feedback"}
+              to={"/contact"}
             className=" bg-[#004F9A] text-white font-normal px-8 py-1.5 lg:rounded-[70px] rounded-[5px]  items-center justify-center align-center"
             type="button"
           >
@@ -173,7 +173,7 @@ const Footer = () => {
           </span> */}
           <div className="lg:mt-5 mt-8 lg:mb-0 mb-1">
             <NavLink
-              to={"/feedback"}
+              to={"/contact"}
               className=" bg-[#004F9A] text-white font-normal px-20 py-2  rounded-full  items-center justify-center align-center"
               type="button"
             >
