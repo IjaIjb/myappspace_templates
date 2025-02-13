@@ -4,9 +4,9 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { UserApis } from "../../../apis/userApi/userApi";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
-import { CartApis } from "../../../apis/userApi/cartApis";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../../store/store";
+// import { CartApis } from "../../../apis/userApi/cartApis";
 // import { useNavigate } from "react-router-dom";
 
 

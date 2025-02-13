@@ -21,7 +21,7 @@ import { login } from "../../../reducer/loginSlice";
 import { Menu, Transition } from "@headlessui/react";
 import { IoMdMore } from "react-icons/io";
 import NavCurrency from "../../../components/Navbars/NavCurrency";
-import { RootState } from "../../../store/store";
+// import { RootState } from "../../../store/store";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -132,6 +132,7 @@ const Products = () => {
         console.error("Error fetching products:", error);
       });
   }, [
+    selectedCurrency,
     storeCode,
     selectedCategory,
     searchResult,

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../../../components/Navbars/Navbar";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 // import dayjs from "dayjs";
 import Modal from "react-awesome-modal";
 import {
@@ -23,7 +23,7 @@ import { Oval } from "react-loader-spinner";
 const CartPage = () => {
   // const navigate = useNavigate();
 
-  const userLoginData = useSelector((state: any) => state.data.login.value);
+  // const userLoginData = useSelector((state: any) => state.data.login.value);
   const [data, setData] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const [totalItem, setTotalItem] = React.useState(0);

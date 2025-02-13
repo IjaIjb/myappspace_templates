@@ -4,7 +4,7 @@ import { CartApis } from '../../../apis/userApi/cartApis';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from '../../../components/footer/Footer';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom';
 import Navbar from '../../../components/Navbars/Navbar';
 
 const ViewPaymentPage = () => {
@@ -13,7 +13,7 @@ const ViewPaymentPage = () => {
 
   const [searchParams] = useSearchParams();
   const [transactionData, setTransactionData] = useState<any>(null); // State to store transaction data
-  const [loading, setLoading] = useState(true); // Loading indicator
+  // const [loading, setLoading] = useState(true); // Loading indicator
 
 
     useEffect(() => {
@@ -49,7 +49,7 @@ const ViewPaymentPage = () => {
             // navigate("/view-cart");
           })
           .finally(() => {
-            setLoading(false);
+            // setLoading(false);
           });
       }, [searchParams, storeCode, navigate]);
     
@@ -78,9 +78,9 @@ const ViewPaymentPage = () => {
       //   // otherData,
       // } = transactionData?.transaction;
     
-      const handlePrint = () => {
-        window.print(); // Trigger print dialog
-      };
+      // const handlePrint = () => {
+      //   window.print(); // Trigger print dialog
+      // };
 
   return (
     <>

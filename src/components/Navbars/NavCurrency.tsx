@@ -1,16 +1,16 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 
 import { Menu, Transition } from "@headlessui/react";
 import { IoIosArrowDown } from "react-icons/io";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { UserApis } from "../../apis/userApi/userApi";
 import { setCurrency } from "../../store/stateSlice";
 import { CartApis } from "../../apis/userApi/cartApis";
 
 const NavCurrency = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [storeCurrency, setStoreCurrency] = React.useState<any>("");
-  const [selected, setSelected] = React.useState<any>("");
+  // const [selected, setSelected] = React.useState<any>("");
 
   const selectedCurrency = localStorage.getItem("selectedCurrency"); // Load from localStorage
 
@@ -43,7 +43,7 @@ const NavCurrency = () => {
     const formData = { currency };
 
     try {
-      const response = await CartApis.updateCurrency(storeCode, formData);
+      await CartApis.updateCurrency(storeCode, formData);
       //    console.log("Currency updated successfully:", response.data);
       window.location.reload();
     } catch (error) {
@@ -55,10 +55,10 @@ const NavCurrency = () => {
     CartApis.getSelectedCurrency(storeCode).then((response) => {
       if (response?.data) {
         // console.log(response.data);
-        setSelected(response?.data);
+        // setSelected(response?.data);
       }
     });
-  }, [storeCode, setCurrency, selectedCurrency]);
+  }, [storeCode, selectedCurrency]);
 
   //   console.log(selected)
   return (

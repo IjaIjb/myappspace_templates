@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../../../components/Navbars/Navbar";
-import { Oval } from "react-loader-spinner";
+// import { Oval } from "react-loader-spinner";
 import Footer from "../../../components/footer/Footer";
 import { ToastContainer } from "react-toastify";
 
@@ -10,7 +10,7 @@ const Contact = () => {
   const [rating, setRating] = useState(5);
   const [comments, setComments] = useState("");
 
-  let [visible, setVisible] = React.useState(false);
+  // let [visible, setVisible] = React.useState(false);
 
   return (
     <div className="">
@@ -72,7 +72,7 @@ const Contact = () => {
             >
               <span> Submit Feedback</span>
               <span className="mt-1">
-                <Oval
+                {/* <Oval
                   visible={visible}
                   height="20"
                   width="20"
@@ -81,7 +81,7 @@ const Contact = () => {
                   ariaLabel="oval-loading"
                   wrapperStyle={{}}
                   wrapperClass=""
-                />
+                /> */}
               </span>
             </button>
           </form>

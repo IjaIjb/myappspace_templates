@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
@@ -30,7 +30,7 @@ const Navbar = () => {
   // const [total, setTotal] = React.useState<any>('');
   const [name, setname] = React.useState('');
   // const [storeData, setStoreData] = React.useState('');
-  const [storeCurrency, setStoreCurrency] = React.useState<any>('');
+  // const [storeCurrency, setStoreCurrency] = React.useState<any>('');
  
   const storeCode = "31958095"
 
@@ -58,21 +58,21 @@ const Navbar = () => {
     })
 
 }, []);
-const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
+// const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
 // console.log(name)
   React.useEffect(() => {
     UserApis.fetchStoreData(storeCode).then((response) => {
       if (response?.data) {
         // console.log(response.data);
         // setStoreData(response?.data?.store);
-        setStoreCurrency(response?.data?.configs.settings);
-        setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
+        // setStoreCurrency(response?.data?.configs.settings);
+        // setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
         dispatch(setCurrency(response?.data?.configs.settings?.default_currency || ""));
 
  
       }
     });
-  }, [storeCode]);
+  }, [storeCode, dispatch]);
 // console.log(storeCurrency)
 
 const logOut = () => {

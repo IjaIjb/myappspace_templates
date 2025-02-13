@@ -3,8 +3,8 @@ import { UserApis } from "../../../apis/userApi/userApi";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../../store/store";
 
 const NewArrival = () => {
   const [loader, setLoader] = React.useState<boolean>(false);

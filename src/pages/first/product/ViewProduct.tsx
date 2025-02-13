@@ -7,8 +7,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CartApis } from "../../../apis/userApi/cartApis";
 import Footer from "../../../components/footer/Footer";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../../store/store";
 
 const ViewProduct = () => {
   const params = useParams();
@@ -86,9 +86,9 @@ const ViewProduct = () => {
     },
   };
 
-  const parsedCostPrice = singleProduct?.selling_price
-    ? JSON.parse(singleProduct.selling_price)
-    : {}; // Default to an empty object if undefined
+  // const parsedCostPrice = singleProduct?.selling_price
+  //   ? JSON.parse(singleProduct.selling_price)
+  //   : {}; // Default to an empty object if undefined
 
   return (
     <div>
