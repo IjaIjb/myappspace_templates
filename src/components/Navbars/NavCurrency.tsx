@@ -4,7 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { IoIosArrowDown } from "react-icons/io";
 // import { useDispatch } from "react-redux";
 import { UserApis } from "../../apis/userApi/userApi";
-import { setCurrency } from "../../store/stateSlice";
+// import { setCurrency } from "../../store/stateSlice";
 import { CartApis } from "../../apis/userApi/cartApis";
 
 const NavCurrency = () => {
