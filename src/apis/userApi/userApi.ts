@@ -16,19 +16,19 @@ export class UserApis {
         }
     }  
 
-    static register(data: any): AxiosPromise<any> {
+    static register(storeCode:any, data: any): AxiosPromise<any> {
         if (configs.type === "LOCAL") {
             return {} as AxiosPromise;
         } else {
-            return this.authLiveApis.registerUser(data);
+            return this.authLiveApis.registerUser(storeCode, data);
         }
     }  
 
-    static verifyMail(pageNo:any): AxiosPromise<Array<any>> {
+    static verifyMail(storeCode:any, data:any): AxiosPromise<Array<any>> {
         if (configs.type === "LOCAL") {
             return {} as AxiosPromise;
         } else {
-            return this.authLiveApis.verifyMail(pageNo);
+            return this.authLiveApis.verifyMail(storeCode, data);
         }
     } 
 
@@ -63,6 +63,22 @@ export class UserApis {
             return this.authLiveApis.login(store_code,data);
         }
     }
+
+    static getProfile(storeCode:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.getProfile(storeCode);
+        }
+    } 
+
+    static updateProfile(storeCode:any, data:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.updateProfile(storeCode, data);
+        }
+    } 
 
     static createStore(data: any): AxiosPromise<any> {
         if (configs.type === "LOCAL") {
@@ -136,6 +152,30 @@ export class UserApis {
         }
     }
 
+    static addToWishlist(storeCode:any, data: any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.addToWishlist(storeCode,data);
+        }
+    }
+
+    static getAllWishlist(storeCode:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.getAllWishlist(storeCode);
+        }
+    } 
+
+    static removeWishlist(storeCode:any, product_id:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.removeWishlist(storeCode, product_id);
+        }
+    } 
+
     static getProduct(storeCode:any,data:any): AxiosPromise<any> {
         if (configs.type === "LOCAL") {
             return {} as AxiosPromise;
@@ -157,6 +197,22 @@ export class UserApis {
             return {} as AxiosPromise;
         } else {
             return this.authLiveApis.getSingleProduct(store_code, category_id);
+        }
+    } 
+
+    static getOrder(storeCode:any, data:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.getOrder(storeCode, data);
+        }
+    } 
+
+    static getTransaction(storeCode:any, data:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.getTransaction(storeCode, data);
         }
     } 
 

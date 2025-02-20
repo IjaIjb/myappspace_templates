@@ -1,9 +1,70 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { UserApis } from '../../apis/userApi/userApi';
+import { login } from '../../reducer/loginSlice';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CardWishlist = () => {
+  const [wishlist, setWishlist] = React.useState([]);
+  const dispatch = useDispatch();
+  const storeCode = "31958095";
+  const selectedCurrency = localStorage.getItem("selectedCurrency") || "";
 
   // const [searchText, setSearchText] = React.useState('');
+  React.useEffect(() => {
+    UserApis.getAllWishlist(storeCode)
+      .then((response) => {
+        if (response?.data) {
+          // console.log(response.data.wishlist);
+          const updatedProducts = response?.data?.wishlist.map((product) => {
+            const parsedSellingPrice = JSON.parse(
+              product?.product?.selling_price || "{}"
+            );
+            return {
+              ...product,
+              display_price: parsedSellingPrice[selectedCurrency] || "0", // Fallback in case currency doesn't exist
+            };
+          });
+          setWishlist(updatedProducts);
+        } else {
+          dispatch(login([]));
+        }
+      })
+      .catch(function (error) {
+        console.error("Error fetching wishlist:", error);
+      });
+  }, [storeCode, dispatch, selectedCurrency]);
+console.log(wishlist)
+
+const deleteList = React.useCallback(
+  (id) => {
+    UserApis.removeWishlist(storeCode, id).then(
+      (response) => {
+        if (response?.data) {
+          console.log(response)
+          toast.success('Deleted Successfully');
+          UserApis.getAllWishlist(storeCode).then(
+            (response) => {
+              if (response?.data) {
+                setWishlist(response?.data?.wishlist)
+              } else {
+                dispatch(login([]))
+              }
+            }
+          )
+        } else {
+          toast.error(response?.response?.data?.message);
+        }
+      }
+    ).catch(function (error) {
+      toast.error(error.response.data.message);
+    })
+  }
+  ,
+  [storeCode, dispatch]
+);
 
   return (
     <>
@@ -42,30 +103,37 @@ const CardWishlist = () => {
           <div >
 
 
-            {/* {
-              userLists?.filter((data) => data?.role !== 'admin')?.map(
-                (cart, index) => ( */}
+            {wishlist?.map(
+                (wish, index) => (
                   <div className="border-[2px] rounded-lg px-4 py-2 my-3 border-[#E3E4E5]">
                     <div className="flex justify-between">
                       <div className="flex justify-start gap-2">
                         <span className="border-[2px] rounded-lg px-5 py-4 border-[#E3E4E5] w-3" 
-                        // style={{ backgroundImage: `url(${cart?.item_img})`, backgroundRepeat: "no-repeat", backgroundSize: 'cover', backgroundPosition: 'center center' }}
+                        style={{ backgroundImage: `url(${wish?.product?.product_images[0]})`, backgroundRepeat: "no-repeat", backgroundSize: 'cover', backgroundPosition: 'center center' }}
                         >
-                          {/* <img src={cart?.product_img} className=" w-fit" alt="" /> */}
+                          <img src={wish?.product?.product_images[0]} className=" w-fit" alt="" />
                         </span>
 
                         <span className="mt-1">
-                        <NavLink to={`/view-product/:cart`} >drink</NavLink> </span>
-                        {/* <NavLink to={`/view-product/${(cart?.item_id)}`} >{cart?.item_name}</NavLink> </span> */}
+                        {/* <NavLink to={`/view-product/:cart`} >drink</NavLink> </span> */}
+                        <NavLink to={`/view-product/${(wish?.product_id)}`} >
+                        {wish?.product?.product_name
+                           ? wish?.product?.product_name.charAt(0).toUpperCase() +
+                           wish?.product?.product_name.slice(1) : ""}
+      
+                        {/* {wish?.product?.product_name} */}
+                        </NavLink> </span>
                       </div>
 
                       <div className='flex justify-between gap-4'>
                         <span className="mt-3">
                             {/* {userLoginData?.data ? (new Intl.NumberFormat('en-US', { style: 'currency', currency: 'NGN' }).format((cart?.item_price) ? (cart?.item_price) : 0.0)) : '0.0'} */}
-                            NGN 500.00
+                            {/* NGN 500.00 */}
+                            {selectedCurrency}
+                            {wish?.display_price}
                             </span>
                         <span className="mt-3  cursor-pointer" 
-                        // onClick={() => deleteList(cart?.id)}
+                        onClick={() => deleteList(wish?.product_id)}
                         >
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7.615 20C7.155 20 6.771 19.846 6.463 19.538C6.15433 19.2293 6 18.845 6 18.385V5.99998H5V4.99998H9V4.22998H15V4.99998H19V5.99998H18V18.385C18 18.845 17.846 19.229 17.538 19.537C17.2293 19.8456 16.845 20 16.385 20H7.615ZM9.808 17H10.808V7.99998H9.808V17ZM13.192 17H14.192V7.99998H13.192V17Z" fill="#E53945" />
@@ -75,11 +143,20 @@ const CardWishlist = () => {
 
                     </div>
 
-
+                    <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover />
                   </div>
-                {/* )
+                 )
               )
-            } */}
+            } 
 
 
 

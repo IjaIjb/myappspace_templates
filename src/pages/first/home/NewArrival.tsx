@@ -9,6 +9,7 @@ import { NavLink } from "react-router-dom";
 const NewArrival = () => {
   const [loader, setLoader] = React.useState<boolean>(false);
   const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
+  const storeName = localStorage.getItem("store_name"); // Save to localStorage
 
   // console.log(selectedCurrency)
   const [filterProducts, setFilteredProducts] = React.useState<any>([]);
@@ -73,16 +74,16 @@ const NewArrival = () => {
     <div>
       <div className="flex justify-center w-full">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
-          <div className="flex justify-between">
+          <div className="flex justify-between pb-5">
             <div className="flex gap-4">
-              <h4 className="border-b-[10px] border-b-[#FFC220] leading-[40px] text-[#000000] text-[32px] font-[400]">
-                New Arrival
-              </h4>
+              <h4 className="leading-[40px] text-[#253D4E] text-[32px] font-[700]">
+              New Arrival
+                </h4>
             </div>
 
-            <div className="border border-[#000000] rounded-[8px] text-[10px] md:text-[16px] h-fit font-[400] py-2 px-7">
+            <NavLink to="/new-arrival" className="border border-[#000000] rounded-[8px] text-[10px] md:text-[16px] h-fit font-[400] py-2 px-7">
               View all
-            </div>
+            </NavLink>
           </div>
 
           {!loader ? (
@@ -133,7 +134,7 @@ const NewArrival = () => {
                   {/* <div className="grid md:grid-cols-4 grid-cols-2 gap-4 mt-10"> */}
                   {filterProducts?.length > 0 ? (
                     filterProducts?.map((prod: any) => (
-                     <div key={prod?.id} className="border rounded-lg mr-3">
+                     <div key={prod?.id} className="border border-[#ECECEC] rounded-lg mr-3">
                       <NavLink
                         to={`/view-product/${prod?.id}`}
                         className="mr-3  p-3 rounded-xl"
@@ -146,21 +147,25 @@ const NewArrival = () => {
 
                         <div className="border-t px-2">
                         <h4 className="pt-2 text-[#787878] text-[16px] md:text-[20px] font-[600] mt-2">
-                          {prod?.product_name}
+                        {prod?.product_name
+                           ? prod?.product_name.charAt(0).toUpperCase() +
+                           prod?.product_name.slice(1) : ""}
                         </h4>
                         <img
                           src="/images/star.svg"
-                          className="rounded-[8px] my-2 object-contain"
-                          alt="mart Logo"
+                          className=" w-20 h-full my-2"
+                          alt=""
                         />
+                        <h4 className="text-[14px] font-[400] pb-1">By <span className="text-[#027DCB]">{storeName}</span></h4>
                         <div className="flex justify-between">
                           <div className="flex gap-2">
                 {/* <h4 className="text-[#C9C9C9] text-[12px] md:text-[16px]  font-[700]">
                   30,300
                 </h4> */}
-                <h4 className="text-[#424242] text-[18px] md:text-[24px] font-[700]">
-                {selectedCurrency} {prod?.display_price}
-                </h4>
+             <h4 className="text-[#027DCB] text-[18px] font-[700]">
+  {selectedCurrency} {Number(prod?.display_price).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+</h4>
+
               </div>
                           {/* <h4 className="text-[#787878] text-[10px] md:text-[14px] font-[500]">
                             10% OFF

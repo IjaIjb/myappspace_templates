@@ -71,8 +71,8 @@ const Contact = () => {
               className="w-full flex justify-center gap-2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
             >
               <span> Submit Feedback</span>
-              <span className="mt-1">
-                {/* <Oval
+              {/* <span className="mt-1">
+                <Oval
                   visible={visible}
                   height="20"
                   width="20"
@@ -81,8 +81,8 @@ const Contact = () => {
                   ariaLabel="oval-loading"
                   wrapperStyle={{}}
                   wrapperClass=""
-                /> */}
-              </span>
+                />
+              </span> */}
             </button>
           </form>
         </div>

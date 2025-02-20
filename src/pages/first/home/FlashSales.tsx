@@ -33,6 +33,7 @@ React.useEffect(() => {
     .catch(function (error) {});
 }, [storeCode]);
 const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
+const storeName = localStorage.getItem("store_name"); // Save to localStorage
 
   //     const [selectedCurrency, setSelectedCurrency] = React.useState<any>(null);
 
@@ -89,11 +90,11 @@ const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
     superLargeDesktop: {
       // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 3000 },
-      items: 6,
+      items: 5,
     },
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 6, // optional, default to 1.
+      items: 5, // optional, default to 1.
     },
     tablet: {
       breakpoint: { max: 1024, min: 464 },
@@ -132,7 +133,7 @@ const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
           <div className="flex items-center justify-between pb-5">
             <div className="lg:flex gap-4">
               <div>
-                <h4 className="border-b-[10px] border-b-[#FFC220] leading-[40px] text-[#000000] text-[32px] font-[400]">
+                <h4 className="leading-[40px] text-[#253D4E] text-[32px] font-[700]">
                   Flash shales
                 </h4>
               </div>
@@ -155,9 +156,9 @@ const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
               </div> */}
             </div>
 
-            <div className="border h-fit border-[#000000] rounded-[8px] text-[10px] md:text-[16px] whitespace-nowrap font-[400] py-2 px-4 md:px-7">
+            <NavLink to="/flash-sales" className="border h-fit border-[#000000] rounded-[8px] text-[10px] md:text-[16px] whitespace-nowrap font-[400] py-2 px-4 md:px-7">
               View all
-            </div>
+            </NavLink>
           </div>
           {!loader ? (
             <div>
@@ -208,7 +209,7 @@ const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
           {filterProducts?.length > 0 ? 
          filterProducts?.filter((prod: any) => prod.sale_type === "flash") // ✅ Only include products with sale_type
          .map((prod: any) => (
-                     <div key={prod?.id} className="border rounded-lg mr-3">
+                     <div key={prod?.id} className="border border-[#ECECEC] rounded-lg mr-3">
                       <NavLink
                         to={`/view-product/${prod?.id}`}
                         className="mr-3  p-3 rounded-xl"
@@ -217,25 +218,36 @@ const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
                           src={prod.product_images[0]}
                           className="rounded-[8px] mb-1 w-full h-[150px] object-contain"
                           alt="mart Logo"
-                        />
+                        /> 
 
-                        <div className="border-t px-2">
-                        <h4 className="pt-2 text-[#787878] text-[16px] md:text-[20px] font-[600] mt-2">
-                          {prod?.product_name}
+                        <div className=" px-2">
+                        <h4 className="pt-2 text-[#253D4E] text-[16px] md:text-[20px] font-[700] mt-2">
+                          {prod?.product_name
+                           ? prod?.product_name.charAt(0).toUpperCase() +
+                           prod?.product_name.slice(1) : ""}
+      
                         </h4>
                         <img
                           src="/images/star.svg"
-                          className="rounded-[8px] my-2 object-contain"
+                          className=" w-20 h-full my-2"
                           alt="mart Logo"
                         />
+                        <h4 className="text-[14px] font-[400] pb-1">By <span className="text-[#027DCB]">{storeName}</span></h4>
                         <div className="flex justify-between">
                           <div className="flex gap-2">
                 {/* <h4 className="text-[#C9C9C9] text-[12px] md:text-[16px]  font-[700]">
                   30,300
                 </h4> */}
-                <h4 className="text-[#424242] text-[18px] md:text-[24px] font-[700]">
-                {selectedCurrency} {prod?.display_price}
-                </h4>
+      <h4 className="text-[#027DCB] text-[18px] font-[700]">
+  {new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: selectedCurrency, // Dynamically applies the correct currency symbol
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(prod?.display_price))}
+</h4>
+
+
               </div>
                           {/* <h4 className="text-[#787878] text-[10px] md:text-[14px] font-[500]">
                             10% OFF

@@ -498,6 +498,10 @@ const CartPage = () => {
                       </span>
 
                       <span className="mt-3">
+                      {cart?.product_name
+                           ? cart?.product_name.charAt(0).toUpperCase() +
+                           cart?.product_name.slice(1) : ""}
+      
                         {cart?.product?.product_name}
                       </span>
                     </div>

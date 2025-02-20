@@ -1,8 +1,31 @@
 import React from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { UserApis } from "../../../apis/userApi/userApi";
 
 const Hero = () => {
+    const storeCode = "31958095";
+     const [banner, setBanner] = React.useState<any>([]);
+  
+    React.useEffect(() => {
+      UserApis.fetchStoreData(storeCode).then((response) => {
+        if (response?.data) {
+            // console.log(response.data);
+          // setStoreData(response?.data?.store);
+          setBanner(response?.data?.configs?.banner?.settings);
+          //   setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
+          const defaultCurrency = "NGN";
+  
+          // Set in localStorage only if it's not already set
+          if (!localStorage.getItem("selectedCurrency")) {
+            localStorage.setItem("selectedCurrency", defaultCurrency);
+            // setSelectedCurrency(defaultCurrency);
+          }
+        }
+      });
+    }, [storeCode]);
+  
+    
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
@@ -30,73 +53,71 @@ const Hero = () => {
             {/* Left Section */}
             <div className=" w-full h-full">
               <div className="">
-                <Carousel
-                  // ref={carouselRefTwo}
-                  swipeable={true}
-                  draggable={true}
-                  showDots={true}
-                  responsive={responsive}
-                  ssr={true} // render carousel on server-side.
-                  infinite={true}
-                  rtl={false}
-                  autoPlay={true} // Disable autoplay to prevent conflict with manual navigation
-                  autoPlaySpeed={7000} // Optional: You can remove this if autoplay is disabled
-                  // keyBoardControl={true}
-                  transitionDuration={500} // Set transition to 500ms for smoother experience
-                  containerClass="carousel-container"
-                  dotListClass="custom-dot-list-style"
-                  itemClass="carousel-item-padding-40-px"
-                  className="rounded-[7px]"
-                  // arrows={false} // Hide default arrows
-                >
-                  <div className="flex w-full rounded-xl bg-[#BBDEF4] pl-3 md:pl-20 p pr-5 h-full">
-                    <div className="flex flex-col py-5 justify-center">
-                      <h4 className="text-[#000000] md:text-[48px] text-[20px] font-[600]">
-                        Your Fashion Journey Starts Here Effortless Shopping,
-                        Endless Style
-                      </h4>
-                      <h5 className="text-[#474646] md:text-[24px] text-[16px] font-[300] mt-4">
-                        These subtitles add an extra layer of allure,
-                        encouraging customers to explore and find their unique
-                        style on Mmart.
-                      </h5>
-                      <div className="bg-[#FFC220] w-fit mt-4 rounded-[5px] py-2 px-5">
-                        Shop now
-                      </div>
-                    </div>
-                    <div className="flex items-end place-self-end justify-end ">
-                      <img
-                        src="/images/blacky.svg"
-                        className="w-[500px] h-full object-contain"
-                        alt="mart Logo"
-                      />
-                    </div>
-                  </div>
+              <Carousel
+    swipeable={true}
+    draggable={true}
+    showDots={true}
+    responsive={responsive}
+    ssr={true} // Server-side rendering
+    infinite={true}
+    autoPlay={true}
+    autoPlaySpeed={7000}
+    transitionDuration={500}
+    containerClass="carousel-container"
+    dotListClass="custom-dot-list-style"
+    itemClass="carousel-item-padding-40-px"
+    className="rounded-[7px]"
+  >
+    {banner?.banners?.length > 0 ? (
+      banner?.banners?.map((ban: any, index: number) => {
+        if (!ban) return null; // Ensure ban is defined
 
-                  <div className="flex w-full rounded-xl bg-[#BBDEF4] pl-3 md:pl-20 pr-5 h-full">
-                    <div className="flex flex-col justify-center">
-                      <h4 className="text-[#000000] md:text-[48px] text-[20px] font-[600]">
-                        Your Fashion Journey Starts Here Effortless Shopping,
-                        Endless Style
-                      </h4>
-                      <h5 className="text-[#474646] md:text-[24px] text-[16px] font-[300] mt-4">
-                        These subtitles add an extra layer of allure,
-                        encouraging customers to explore and find their unique
-                        style on Mmart.
-                      </h5>
-                      <div className="bg-[#FFC220] w-fit mt-4 rounded-[5px] py-2 px-5">
-                        Shop now
-                      </div>
-                    </div>
-                    <div className="flex items-end place-self-end justify-end ">
-                      <img
-                        src="/images/blacky.svg"
-                        className="w-[500px] h-full object-contain"
-                        alt="mart Logo"
-                      />
-                    </div>
-                  </div>
-                </Carousel>
+        const isExternal = ban?.cta_link && !ban?.cta_link.startsWith("/");
+        const formattedLink = isExternal
+          ? ban?.cta_link.startsWith("http")
+            ? ban?.cta_link
+            : `https://${ban?.cta_link}`
+          : ban?.cta_link;
+
+        return (
+          <div
+            key={index}
+            className="flex w-full justify-between rounded-xl pl-3 md:pl-20 pr-5 h-full"
+            style={{ backgroundColor: banner?.theme_color || "#BBDEF4" }}
+            aria-label={ban?.title || `Banner ${index + 1}`} // Add fallback aria-label
+          >
+            <div className="flex flex-col py-5 justify-center">
+              <h4 className="text-white md:text-[48px] text-[20px] font-[600]">
+                {ban?.title}
+              </h4>
+              <h5 className="text-white md:text-[24px] text-[16px] font-[300] mt-4">
+                {ban?.description}
+              </h5>
+              {formattedLink && (
+                <a
+                  href={formattedLink}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="bg-[#FFC220] w-fit mt-4 rounded-[5px] py-2 px-5"
+                >
+                  {ban?.cta_text}
+                </a>
+              )}
+            </div>
+            <div className="flex items-end place-self-end justify-end">
+              <img
+                src="/images/blacky.svg"
+                className="w-full h-full object-contain"
+                alt="mart Logo"
+              />
+            </div>
+          </div>
+        );
+      })
+    ) : (
+      <p className="text-white text-center">No banners available</p>
+    )}
+  </Carousel>
               </div>
             </div>
           </div>

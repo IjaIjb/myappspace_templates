@@ -19,9 +19,9 @@ const NavCurrency = () => {
   React.useEffect(() => {
     UserApis.fetchStoreData(storeCode).then((response) => {
       if (response?.data) {
-        //   console.log(response.data);
+          console.log(response.data);
         // setStoreData(response?.data?.store);
-        setStoreCurrency(response?.data?.configs.settings);
+        setStoreCurrency(response?.data?.configs?.payment?.settings);
         //   setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
         const defaultCurrency = "NGN";
 

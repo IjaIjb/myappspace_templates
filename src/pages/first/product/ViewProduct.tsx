@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../../../components/Navbars/Navbar";
 import { useParams } from "react-router-dom";
 import { UserApis } from "../../../apis/userApi/userApi";
@@ -90,6 +90,10 @@ const ViewProduct = () => {
   //   ? JSON.parse(singleProduct.selling_price)
   //   : {}; // Default to an empty object if undefined
 
+    const [selectedImage, setSelectedImage] = useState(
+      singleProduct?.product_images?.[0] || ""
+    );
+    
   return (
     <div>
       <Navbar />
@@ -104,7 +108,10 @@ const ViewProduct = () => {
                       key={index}
                       src={pro}
                       alt={`Product ${index + 1}`}
-                      className="w-20 h-20 object-cover rounded-lg"
+                      className={`w-20 h-20 object-cover rounded-lg cursor-pointer ${
+                        selectedImage === pro ? "border-2 border-blue-500" : ""
+                      }`}
+                      onClick={() => setSelectedImage(pro)}
                     />
                   )
                 )}
@@ -146,21 +153,27 @@ const ViewProduct = () => {
                   )}
                 </Carousel>
               </div>
-              <img
-                src={
-                  singleProduct?.product_images &&
-                  singleProduct?.product_images[0]
-                }
+              {/* <img
+                src={selectedImage || singleProduct?.product_images && singleProduct?.product_images[0]}
                 alt="/"
                 className="w-[80%] h-full object-cover rounded-lg"
-              />
+              /> */}
+              <img
+  src={selectedImage || (singleProduct?.product_images && singleProduct?.product_images[0])}
+  alt="/"
+  className="w-[80%] h-full object-cover rounded-lg"
+/>
+
             </div>
 
             <div className="flex flex-col gap-6 w-full">
               <div>
-                <h3 className="text-[25px] font-[800]">
-                  {singleProduct?.product_name}
-                </h3>
+              <h3 className="text-[25px] font-[800]">
+  {singleProduct?.product_name
+    ? singleProduct.product_name.charAt(0).toUpperCase() +
+      singleProduct.product_name.slice(1)
+    : ""}
+</h3>
                 <div
                     
                       className="flex gap-2 p-2 rounded-md bg-white shadow-sm"

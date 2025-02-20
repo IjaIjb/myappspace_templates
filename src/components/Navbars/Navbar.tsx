@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
-import { GrCycle } from "react-icons/gr";
+// import { GrCycle } from "react-icons/gr";
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
@@ -17,28 +17,47 @@ import { UserApis } from "../../apis/userApi/userApi";
 import { useDispatch } from "react-redux";
 import { setCurrency } from "../../store/stateSlice";
 import NavCurrency from "./NavCurrency";
+import { login } from "../../reducer/loginSlice";
 
 const Navbar = () => {
   // const dispatch: Dispatch = useDispatch();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userLoginData = useSelector((state:any) => state.data.login.value);
-  const [search, setSearch] = React.useState('');
-
-  // console.log(userLoginData)
+  const [search, setSearch] = React.useState(''); 
+   const [wishlist, setWishlist] = React.useState([]);
+  
+// console.log(userLoginData)
+//   // console.log(userLoginData)
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   // const [total, setTotal] = React.useState<any>('');
   const [name, setname] = React.useState('');
   // const [storeData, setStoreData] = React.useState('');
   // const [storeCurrency, setStoreCurrency] = React.useState<any>('');
+  const [logo, setLogo] = React.useState<any>('');
  
   const storeCode = "31958095"
+
+    React.useEffect(() => {
+      UserApis.getAllWishlist(storeCode)
+        .then((response) => {
+          if (response?.data) {
+            console.log(response.data.wishlist);
+           
+            setWishlist(response.data.wishlist);
+          } else {
+            dispatch(login([]));
+          }
+        })
+        .catch(function (error) {
+          console.error("Error fetching wishlist:", error);
+        });
+    }, [storeCode,dispatch]);
 
   React.useEffect(() => {
     CartApis.getCart(storeCode).then(
         (response: AxiosResponse<any>) => {
             if (response?.data) {
-                console.log(response?.data.cart_items)
                 const totalQuantity = response?.data?.cart_items.reduce(
                   (sum: number, item: any) => sum + Number(item.quantity),
                   0
@@ -59,21 +78,21 @@ const Navbar = () => {
 
 }, []);
 // const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
-// console.log(name)
+
   React.useEffect(() => {
     UserApis.fetchStoreData(storeCode).then((response) => {
       if (response?.data) {
-        // console.log(response.data);
-        // setStoreData(response?.data?.store);
-        // setStoreCurrency(response?.data?.configs.settings);
-        // setSelectedCurrency(response?.data?.configs.settings?.default_currency || "");
-        dispatch(setCurrency(response?.data?.configs.settings?.default_currency || ""));
+        console.log(response?.data);
+        // setStoreCurrency(response?.data?.configs?.payment?.settings);
+        // setSelectedCurrency(response?.data?.configs.payment?.settings?.default_currency || "");
+        setLogo(response?.data?.configs?.logo?.settings?.logo);
+        dispatch(setCurrency(response?.data?.configs.payment?.settings?.default_currency || ""));
 
+        localStorage.setItem("store_name", response?.data?.store?.store_name); // Save to localStorage
  
       }
     });
-  }, [storeCode, dispatch]);
-// console.log(storeCurrency)
+  }, [storeCode,dispatch]);
 
 const logOut = () => {
   // dispatch(login([]))
@@ -97,7 +116,6 @@ const logOut = () => {
   // React.useEffect(() => {
   //   CartApis.getSelectedCurrency(storeCode).then((response) => {
   //     if (response?.data) {
-  //       console.log(response.data);
   //       // setGetSingleProduct(response?.data?.product);
 
  
@@ -106,7 +124,6 @@ const logOut = () => {
   // }, [storeCode]);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the form from submitting by default
-// console.log(search)
     if (search.trim() !== '') {
         navigate('/product', { state: { searchMe: search } });
     } else {
@@ -122,10 +139,10 @@ const logOut = () => {
             <div className="flex justify-between items-center py-4 gap-4 md:px-[40px] px-3">
               <NavLink to={"/"}>
                 <img
-                  src="/images/white-logo.png"
+                  src={logo}
                   width={"100px"}
                   className=""
-                  alt="mart Logo"
+                  alt="Logo"
                 />
               </NavLink>
 
@@ -187,13 +204,35 @@ const logOut = () => {
                   }
                 </div> */}
 
-                <div className="flex gap-2">
-                  <FaRegHeart className=" w-6 h-6" />
-                  {
-                    <NavLink to={"/"}>
-                      <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
-                    </NavLink>
-                  }
+                <div >
+                  
+                  {userLoginData ? (
+ <NavLink to={"/user/wishlist"} className="flex gap-2">
+ <div className="relative  flex justify-end ">
+ <FaRegHeart className=" w-6 h-6" />
+
+   <div className="absolute inline-flex items-center justify-center  w-[20px] h-[20px] text-xs font-medium text-black bg-[#FFC220] border border-[#000] rounded-full -top-1 -right-2">
+     {wishlist ? wishlist.length ?? 0 : "0"
+     }
+   </div>
+ </div>
+     <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
+   </NavLink>
+                  ) : (
+                    <div className="flex gap-2">
+                    <div className="relative  flex justify-end ">
+                    <FaRegHeart className=" w-6 h-6" />
+  
+                      <div className="absolute inline-flex items-center justify-center  w-[20px] h-[20px] text-xs font-medium text-black bg-[#FFC220] border border-[#000] rounded-full -top-1 -right-2">
+                        {wishlist ? wishlist.length ?? 0 : "0"
+                        }
+                      </div>
+                    </div>
+                        <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
+                      </div>
+                  )}
+                   
+                
                 </div>
 
                 <NavLink to={"/view-cart"} className="flex  gap-3">
@@ -350,7 +389,9 @@ const logOut = () => {
                                 <ul>
                                     <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/profile'}>Profile</NavLink> </li>
                                     <hr />
-                                    <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/view-purchase'}>Orders</NavLink></li>
+                                    <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/orders'}>Orders</NavLink></li>
+                                    <hr />
+                                    <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/transaction'}>Transactions</NavLink></li>
 
                                     <hr />
                                     <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/wishlist'}>Wishlist</NavLink></li>
@@ -657,27 +698,34 @@ const logOut = () => {
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
-              <div className="flex  gap-2">
-                {/* <div className=''> */}
-                <GrCycle className=" w-4 h-4" />
-                {/* </div> */}
-                {
-                  <NavLink to={"/"}>
-                    <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
-                  </NavLink>
-                }
-              </div>
+           
+            {userLoginData ? (
+ <NavLink to={"/user/wishlist"} className="flex gap-2">
+ <div className="relative  flex justify-end ">
+ <FaRegHeart className=" w-6 h-6" />
 
-              <div className="flex gap-2">
-                {/* <div className=''> */}
-                <FaRegHeart className=" w-4 h-4" />
-                {/* </div> */}
-                {
-                  <NavLink to={"/"}>
-                    <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
-                  </NavLink>
-                }
-              </div>
+   <div className="absolute inline-flex items-center justify-center  w-[20px] h-[20px] text-xs font-medium text-black bg-[#FFC220] border border-[#000] rounded-full -top-1 -right-2">
+     {wishlist ? wishlist.length ?? 0 : "0"
+     }
+   </div>
+ </div>
+     <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
+   </NavLink>
+                  ) : (
+                    <div className="flex gap-2">
+                    <div className="relative  flex justify-end ">
+                    <FaRegHeart className=" w-4 h-4" />
+  
+                      <div className="absolute inline-flex items-center justify-center  w-[20px] h-[20px] text-xs font-medium text-black bg-[#FFC220] border border-[#000] rounded-full -top-1 -right-2">
+                        {wishlist ? wishlist.length ?? 0 : "0"
+                        }
+                      </div>
+                    </div>
+                        <h3 className="text-[11.6px]  font-normal">Wishlist</h3>
+                      </div>
+                  )}
+
+    
             </div>
 
             <div className="flex items-center gap-3">
@@ -753,8 +801,10 @@ const logOut = () => {
 
                   <div className="absolute inline-flex items-center justify-center  w-[15px] h-[15px] text-xs font-medium text-black bg-[#FFC220] border border-[#000] rounded-full -top-1 -right-2">
                     {
-                      // userLoginData?.data ? name :
-                      "0"
+                      // userLoginData?.data ?
+                       name 
+                      //  :
+                      // "0"
                     }
                   </div>
                 </div>
@@ -835,7 +885,11 @@ const logOut = () => {
                               <ul>
                                   <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/profile'}>Profile</NavLink> </li>
                                   <hr />
-                                  <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/view-purchase'}>Orders</NavLink></li>
+                                  <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/orders'}>Orders</NavLink></li>
+                                  <hr />
+                                  <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/transaction'}>Transactions</NavLink></li>
+                                  {/* <hr />
+                                  <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/view-purchase'}>Orders</NavLink></li> */}
 
                                   <hr />
                                   <li className='py-2 cursor-pointer hover:bg-gray-200 px-2'><NavLink to={'/user/wishlist'}>Wishlist</NavLink></li>
@@ -847,10 +901,10 @@ const logOut = () => {
                           </div>
 
                       }>
-                          <h3 className='text-[11.6px] font-normal mt-2 cursor-pointer text-white'>Hi, User</h3>
+                          <h3 className='text-[11.6px] font-normal mt-2 cursor-pointer'>Hi, {userLoginData?.data?.first_name}</h3>
                       </Tippy>
                       :
-                  <NavLink to={"/"}>
+                  <NavLink to={"/sign-in"}>
                     <h3 className="text-[14px]  font-semibold">Account</h3>
                   </NavLink>
                 }

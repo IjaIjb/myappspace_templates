@@ -5,10 +5,15 @@ import { lazy } from "react";
 const HomePage = lazy(() => import("../pages/first/home/Home"));
 const SigninPage = lazy(() => import("../components/auth/Login"));
 const RegisterPage = lazy(() => import("../components/auth/Register"));
+const VerifyEmailPage = lazy(() => import("../components/auth/VerifyEmail"));
 const ProductPage = lazy(() => import("../pages/first/product/Products"));
 const ViewCartPage = lazy(() => import("../pages/first/cart/CartPage"));
 const ViewProductPage = lazy(() => import("../pages/first/product/ViewProduct"));
+const FlashSalesPage = lazy(() => import("../pages/first/flashSales/FlashSalesPage"));
+const NewSalesPage = lazy(() => import("../pages/first/newSales/NewSalesPagge"));
 const ProfilePage = lazy(() => import("../pages/profile/Profile"));
+const OrdersPage = lazy(() => import("../pages/profile/Orders"));
+const TransactionPage = lazy(() => import("../pages/profile/Transaction"));
 const WishListPage = lazy(() => import("../pages/profile/Wishlist"));
 const AddressPage = lazy(() => import("../pages/profile/Address"));
 const CreateAddressPage = lazy(() => import("../pages/profile/CreateAddress"));
@@ -31,6 +36,10 @@ const routes = [
     component: RegisterPage,
   },
   {
+    path: "/verify-email",
+    component: VerifyEmailPage,
+  },
+  {
     path: "/home",
     component: HomePage,
   },
@@ -39,12 +48,28 @@ const routes = [
     component: ProductPage,
   },
   {
+    path: "/flash-sales",
+    component: FlashSalesPage,
+  },
+  {
+    path: "/new-arrival",
+    component: NewSalesPage,
+  },
+  {
     path: "/view-cart",
     component: ViewCartPage,
   },
   {
     path: "/user/profile",
     component: ProfilePage,
+  },
+  {
+    path: "/user/orders",
+    component: OrdersPage,
+  },
+  {
+    path: "/user/transaction",
+    component: TransactionPage,
   },
   {
     path: "/user/wishlist",
@@ -78,6 +103,7 @@ const routes = [
     path: "/contact",
     component: ContactPage,
   },
+
 ];
 
 

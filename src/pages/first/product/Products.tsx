@@ -1,5 +1,5 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { FaRegHeart } from "react-icons/fa6";
+import React, { useEffect, useState, Fragment, useCallback } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
 // import Carousel from "react-multi-carousel";
 // import "react-multi-carousel/lib/styles.css";
 import { UserApis } from "../../../apis/userApi/userApi";
@@ -22,6 +22,8 @@ import { Menu, Transition } from "@headlessui/react";
 import { IoMdMore } from "react-icons/io";
 import NavCurrency from "../../../components/Navbars/NavCurrency";
 // import { RootState } from "../../../store/store";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -70,7 +72,7 @@ const Products = () => {
   //   // Normalize the category string by removing spaces and special characters
   //   return string.replace(/\s+/g, "").replace(/&/g, "");
   // };
-
+console.log(filterProducts)
   const storeCode = "31958095";
   React.useEffect(() => {
     UserApis.getCategory(storeCode)
@@ -110,17 +112,19 @@ const Products = () => {
       .then((response) => {
         setLoader(false);
         if (response?.data?.products) {
-             // Map products to parse and extract price based on selectedCurrency
-             const updatedProducts = response.data.products.map((product: any) => {
-              const parsedSellingPrice = JSON.parse(product.selling_price || "{}");
-              return {
-                ...product,
-                display_price: parsedSellingPrice[selectedCurrency] || "0", // Fallback in case currency doesn't exist
-              };
-            });
-    
-            setFilteredProducts(updatedProducts); // ✅ Update state with modified prices
-        
+          // Map products to parse and extract price based on selectedCurrency
+          const updatedProducts = response.data.products.map((product: any) => {
+            const parsedSellingPrice = JSON.parse(
+              product.selling_price || "{}"
+            );
+            return {
+              ...product,
+              display_price: parsedSellingPrice[selectedCurrency] || "0", // Fallback in case currency doesn't exist
+            };
+          });
+
+          setFilteredProducts(updatedProducts); // ✅ Update state with modified prices
+
           console.log("Fetched Products:", response.data.products);
         } else {
           setFilteredProducts([]); // ✅ Prevent undefined issues
@@ -132,13 +136,14 @@ const Products = () => {
         console.error("Error fetching products:", error);
       });
   }, [
-    selectedCurrency,
     storeCode,
     selectedCategory,
     searchResult,
     location?.state?.searchMe,
     search,
+    selectedCurrency
   ]);
+  const [wishlist, setWishlist] = React.useState(new Set());
 
   React.useEffect(() => {
     CartApis.getCart(storeCode)
@@ -157,6 +162,63 @@ const Products = () => {
       });
   }, []);
 
+  const toggleWishlist = useCallback(
+    async (productInfo: any) => {
+      const productId = productInfo?.id;
+      const isWished = wishlist.has(productId);
+  
+      try {
+        if (isWished) {
+          // Remove from wishlist
+          const response = await UserApis.removeWishlist(storeCode, productId);
+          console.log(response);
+          if (response?.data) {
+            setWishlist((prev:any) => {
+              const updatedSet = new Set([...prev]); // Ensure a new reference
+              updatedSet.delete(productId);
+              return updatedSet;
+            });
+            toast.success(response.data.message);
+          }
+        } else {
+          // Add to wishlist
+          const response = await UserApis.addToWishlist(storeCode, { product_id: productId });
+          console.log(response);
+          if (response?.data) {
+            setWishlist((prev:any) => {
+              const updatedSet = new Set([...prev]); // Ensure a new reference
+              updatedSet.add(productId);
+              return updatedSet;
+            });
+            toast.success(response.data.message);
+          }
+        }
+      } catch (error) {
+        console.error("Wishlist error:", error);
+        toast.error("Something went wrong.");
+      }
+    },
+    [wishlist, storeCode]
+  );
+  
+
+  React.useEffect(() => {
+    UserApis.getAllWishlist(storeCode)
+      .then((response) => {
+        if (response?.data) {
+          // console.log(response.data.wishlist);
+          const wishListIds = new Set(
+            response?.data?.wishlist.map((item: any) => item.product_id)
+          );
+          setWishlist(wishListIds);
+        } else {
+          dispatch(login([]));
+        }
+      })
+      .catch(function (error) {
+        console.error("Error fetching wishlist:", error);
+      });
+  }, [storeCode, dispatch]);
   const logOut = () => {
     dispatch(login([]));
     navigate("/sign-in");
@@ -173,6 +235,7 @@ const Products = () => {
     //     console.log("new error");
     // })
   };
+  console.log(wishlist)
   // console.log(categories)
 
   // Fetch products when category changes
@@ -1264,16 +1327,18 @@ const Products = () => {
             {!loader ? (
               filterProducts?.length >= 1 ? (
                 filterProducts?.map((data: any, index: number) => (
-                  <span className=" md:w-full  hover:bg-[#f1f6f9] border-2 bg-gray-200 border-[#E6F1FC] rounded-lg p-2 cursor-pointer">
+                  <div key={data.id} className=" md:w-full  hover:bg-[#f1f6f9] border-2 bg-gray-200 border-[#E6F1FC] rounded-lg p-2 cursor-pointer">
                     <span
-                      // onClick={() => toggleWishlist(data)}
                       className="flex justify-end cursor-pointer"
+                      onClick={() => toggleWishlist(data)}
                     >
-                      {/* {userWishLists.has(data.id.toString()) ? (
-                          <FaHeart className="text-blue-700" />
-                        ) : ( */}
-                      <FaRegHeart className="text-blue-700" />
-                      {/* )} */}
+               {wishlist.has(data.id) ? ( 
+  <FaHeart className="text-blue-700" />
+) : (
+  <FaRegHeart className="text-blue-700" />
+)}
+
+
                     </span>
 
                     <NavLink to={`/view-product/${data?.id}`}>
@@ -1290,9 +1355,16 @@ const Products = () => {
                       ></p>
                       <div className="px-3">
                         <h5 className="text-[18px] pb-1 font-semibold text-gray-900 ">
+                        {data?.product_name
+                           ? data?.product_name.charAt(0).toUpperCase() +
+                           data?.product_name.slice(1) : ""}
+      
                           {data?.product_name}
                         </h5>
-                        <p> {selectedCurrency} {data?.display_price}</p>
+                        <p>
+                          {" "}
+                          {selectedCurrency} {data?.display_price}
+                        </p>
                       </div>
                       <div>
                         {/* {data?.is_under_deal ? (
@@ -1323,7 +1395,7 @@ const Products = () => {
                           </span>
                         </div> */}
                     </NavLink>
-                  </span>
+                  </div>
                 ))
               ) : (
                 <div className="md:p-6 min-w-[90vw]">
@@ -1353,6 +1425,18 @@ const Products = () => {
             )}
           </div>
         </div>
+
+        <ToastContainer
+          position="bottom-left"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
 
       <Footer />
