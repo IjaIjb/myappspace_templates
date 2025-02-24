@@ -224,6 +224,14 @@ export class UserApis {
         }
     } 
 
+    static fetchStoreDataDomain(domain:any): AxiosPromise<any> {
+        if (configs.type === "LOCAL") {
+            return {} as AxiosPromise;
+        } else {
+            return this.authLiveApis.fetchStoreDataDomain(domain);
+        }
+    } 
+
     static logout(store_code:any, data: any): AxiosPromise<any> {
         if (configs.type === "LOCAL") {
             return {} as AxiosPromise;

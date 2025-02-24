@@ -4,7 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CardUpdateProfile = () => {
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
 
   // State for form fields
   // const [email, setEmail] = useState("");
@@ -31,7 +32,7 @@ const CardUpdateProfile = () => {
         setDateOfBirth(profileData.date_of_birth || "");
       }
     });
-  }, []);
+  }, [storeCode]);
 
   // Handle form submission
   const handleSubmit = useCallback(

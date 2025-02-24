@@ -160,6 +160,18 @@ export class UserLiveApis extends AxiosGlobal{
         });
     }
 
+    fetchStoreDataDomain(domain: string): AxiosPromise<Array<any>> {
+        return this.axios.get(`${configs.contextCustomer}/store/by-domain?domain=${domain}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": `Bearer ${store.getState().data.login.value.token}`,
+                "Access-Control-Allow-Origin": "*"
+            },
+        });
+    }
+    
+    
     getOrder(storeCode:any, params ={}): AxiosPromise<Array<any>> {
         return this.axios.get(`${configs.contextCustomer}/${storeCode}/orders/getAll`, {
             headers: { "Content-Type": "aplication/json", "Accept": "aplication/json", "Authorization": `Bearer ${store.getState().data.login.value.token}`, "Access-Control-Allow-Origin": "*" },

@@ -4,7 +4,8 @@ import "react-multi-carousel/lib/styles.css";
 import { UserApis } from "../../../apis/userApi/userApi";
 
 const Hero = () => {
-    const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
      const [banner, setBanner] = React.useState<any>([]);
   
     React.useEffect(() => {

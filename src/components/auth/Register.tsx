@@ -17,7 +17,19 @@ const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+ 
+  const [storeLogo, setStoreLogo] = useState<any>(null); // Store logo URL
+  
+  useEffect(() => {
+  const storedLogo = localStorage.getItem("storeLogo");
+
+      if (storedLogo) {
+          setStoreLogo(storedLogo);
+      }
+  }, []);
+  
+  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -88,7 +100,7 @@ const Register = () => {
           toast.error(error?.response?.data?.message);
         });
     },
-    [userData, navigate]
+    [userData, navigate, storeCode]
   );
 
   return (
@@ -98,12 +110,12 @@ const Register = () => {
           <div>
             <NavLink className="text-center flex justify-center" to={"/"}>
               <img
-                src="./images/logo.png"
-                className="text-center flex justify-center"
+                src={storeLogo}
+                className="text-center w-full h-7 flex justify-center"
                 alt="mart Logo"
               />
             </NavLink>
-            <h1 className=" mt-6 text-[#027DCB] lg:text-[32px] text-[28px] font-semibold">
+            <h1 className=" mt-6 text-[#027DCB] text-center lg:text-[32px] text-[28px] font-semibold">
               Create your account
             </h1>
             <p className="text-center text-[#00000080] text-[14px] font-normal">

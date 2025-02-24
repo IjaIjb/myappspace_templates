@@ -11,7 +11,8 @@ const Transaction = () => {
   const navigate = useNavigate();
 
   const [categories, setCategories] = React.useState<any>([]);
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
   const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
 
   React.useEffect(() => {

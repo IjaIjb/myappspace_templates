@@ -5,8 +5,8 @@ import { CartApis } from '../../apis/userApi/cartApis';
 import AddressTable from './AddressTable';
 
 const CardAddress = () => {
-  const storeCode= "31958095"
-  
+  const storeCode = localStorage.getItem("storeCode") || "";
+
     const [address, setAddress] = React.useState<any>([]);
   
   React.useEffect(() => {

@@ -31,6 +31,7 @@ const Products = () => {
   const dispatch: Dispatch = useDispatch();
 
   const userLoginData = useSelector((state: any) => state.data.login.value);
+  const storedLogo:any = localStorage.getItem("storeLogo");
 
   // const { product } = location.state || {};
   // console.log(product)
@@ -73,7 +74,9 @@ const Products = () => {
   //   return string.replace(/\s+/g, "").replace(/&/g, "");
   // };
 console.log(filterProducts)
-  const storeCode = "31958095";
+const storeCode = localStorage.getItem("storeCode") || "";
+
+  console.log(storeCode)
   React.useEffect(() => {
     UserApis.getCategory(storeCode)
       .then((response) => {
@@ -143,6 +146,7 @@ console.log(filterProducts)
     search,
     selectedCurrency
   ]);
+  
   const [wishlist, setWishlist] = React.useState(new Set());
 
   React.useEffect(() => {
@@ -160,7 +164,7 @@ console.log(filterProducts)
         // handle error
         console.log("eror");
       });
-  }, []);
+  }, [storeCode]);
 
   const toggleWishlist = useCallback(
     async (productInfo: any) => {
@@ -235,7 +239,7 @@ console.log(filterProducts)
     //     console.log("new error");
     // })
   };
-  console.log(wishlist)
+  // console.log(wishlist)
   // console.log(categories)
 
   // Fetch products when category changes
@@ -330,7 +334,7 @@ console.log(filterProducts)
               <div className="flex justify-between items-center py-4 gap-4 md:px-[40px] px-3">
                 <NavLink to={"/"}>
                   <img
-                    src="/images/white-logo.png"
+                    src={storedLogo}
                     width={"100px"}
                     className=""
                     alt="mart Logo"

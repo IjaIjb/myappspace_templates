@@ -18,7 +18,7 @@ const FlashSales = () => {
   
   // const [categories, setCategories] = React.useState<any>([]);
   const carouselRefTwo = useRef<any>(null);
-const storeCode= "31958095"
+  const storeCode = localStorage.getItem("storeCode") || "";
 React.useEffect(() => {
   
   UserApis.getCategory(storeCode)
@@ -128,13 +128,14 @@ const storeName = localStorage.getItem("store_name"); // Save to localStorage
 
   return (
     <div>
+      {filterProducts?.length < 0 && (
       <div className="flex justify-center w-full ">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
           <div className="flex items-center justify-between pb-5">
             <div className="lg:flex gap-4">
               <div>
                 <h4 className="leading-[40px] text-[#253D4E] text-[32px] font-[700]">
-                  Flash shales
+                  Flash Sales
                 </h4>
               </div>
               {/* <div className="flex gap-4 lg:mt-0 mt-2">
@@ -620,6 +621,7 @@ const storeName = localStorage.getItem("store_name"); // Save to localStorage
           </div> */}
         </div>
       </div>
+)}
     </div>
   );
 };

@@ -10,7 +10,9 @@ import LoadingSpinnerPage from '../../../components/UI/LoadingSpinnerPage';
 
 const ViewPaymentPage = () => {
     const navigate = useNavigate();
-    const storeCode = "31958095";
+    const storeCode = localStorage.getItem("storeCode") || "";
+
+
 
   const [searchParams] = useSearchParams();
   const [transactionData, setTransactionData] = useState<any>(null); // State to store transaction data

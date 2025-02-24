@@ -9,7 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const CardWishlist = () => {
   const [wishlist, setWishlist] = React.useState([]);
   const dispatch = useDispatch();
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
   const selectedCurrency = localStorage.getItem("selectedCurrency") || "";
 
   // const [searchText, setSearchText] = React.useState('');

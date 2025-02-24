@@ -1,18 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink } from "react-router-dom";
 import { IoLogoTiktok } from "react-icons/io5";
 
 const Footer = () => {
+  // const storeCode = localStorage.getItem("storeCode") || "";
+  const [storeLogo, setStoreLogo] = useState<any>(null); // Store logo URL
+    
+    useEffect(() => {
+    const storedLogo = localStorage.getItem("storeLogo");
+   
+        if (storedLogo) {
+            setStoreLogo(storedLogo);
+        }
+    }, []);
   return (
     <div className="  left-0 right-0 bottom-0  pt-10  ">
     <div className=" bg-[#004F9A] py-2">
       <span className="flex justify-center text-white">
         <NavLink to={"/"}>
           <img
-            src="/images/white-logo.png"
-            width={"100px"}
-            className=""
-            alt="mart Logo"
+            src={storeLogo}
+         
+            className="w-full h-6"
+            alt=""
           />
         </NavLink>
       </span>

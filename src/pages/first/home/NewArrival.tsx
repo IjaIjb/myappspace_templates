@@ -10,10 +10,12 @@ const NewArrival = () => {
   const [loader, setLoader] = React.useState<boolean>(false);
   const selectedCurrency = localStorage.getItem("selectedCurrency") || "USD";
   const storeName = localStorage.getItem("store_name"); // Save to localStorage
+  const storeCode = localStorage.getItem("storeCode") || "";
 
   // console.log(selectedCurrency)
   const [filterProducts, setFilteredProducts] = React.useState<any>([]);
-  const storeCode = "31958095";
+  
+  console.log(storeCode)
   const carouselRefTwo = useRef<any>(null);
 
   useEffect(() => {

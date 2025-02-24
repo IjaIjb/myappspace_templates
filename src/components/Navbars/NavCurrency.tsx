@@ -14,7 +14,7 @@ const NavCurrency = () => {
 
   const selectedCurrency = localStorage.getItem("selectedCurrency"); // Load from localStorage
 
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
 
   React.useEffect(() => {
     UserApis.fetchStoreData(storeCode).then((response) => {

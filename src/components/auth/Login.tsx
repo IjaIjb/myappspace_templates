@@ -29,7 +29,20 @@ function Login() {
 
   // How to access the redux store
   // const userLoginData = useSelector((state: any) => state.data.login.value);
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
+  const [storeLogo, setStoreLogo] = useState<any>(null); // Store logo URL
+  
+  useEffect(() => {
+    const storedLogo = localStorage.getItem("storeLogo");
+  
+  
+      if (storedLogo) {
+          setStoreLogo(storedLogo);
+      }
+  }, []);
+  
+  
 
   // This is used to update the store
   const dispatch: Dispatch = useDispatch();
@@ -86,9 +99,9 @@ function Login() {
         <div className="container flex flex-col md:justify-center mx-auto items-center rounded-lg p-6 md:max-w-3xl">
           <div>
             <NavLink to={"/"}>
-              <img src="./images/logo.png" className="" alt="mart Logo" />
+              <img src={storeLogo} className="w-full h-6" alt="mart Logo" />
             </NavLink>
-            <h1 className="mt-6 text-[#027DCB] lg:text-[32px] text-[28px] font-semibold">
+            <h1 className="mt-6 text-[#027DCB] text-center lg:text-[32px] text-[28px] font-semibold">
               Welcome Back
             </h1>
             <p className="text-center text-[#00000080] text-[14px] font-normal">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -114,6 +114,7 @@ const CartPage = () => {
     const { name, value } = e.target;
     setUserdata({ ...userData, [name]: value });
   };
+  const storeCode = localStorage.getItem("storeCode") || "";
 
   // Handle country selection
   const handleCountryChange = (selectedOption: any) => {
@@ -168,9 +169,9 @@ const CartPage = () => {
           toast.error("Offfline");
         });
     },
-    [userData]
+    [userData, storeCode]
   );
-  const storeCode = "31958095";
+
 
   React.useEffect(() => {
     CartApis.getCart(storeCode)

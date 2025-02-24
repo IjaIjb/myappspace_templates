@@ -9,8 +9,8 @@ const NewSalesPagge = () => {
            const [filterProducts, setFilteredProducts] = React.useState<any>([]);
            const [loader, setLoader] = React.useState<boolean>(false);
          
-          
-        const storeCode= "31958095"
+           const storeCode = localStorage.getItem("storeCode") || "";
+
         
           console.log(selectedCurrency)
         

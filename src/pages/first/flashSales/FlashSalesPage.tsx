@@ -18,7 +18,8 @@ const FlashSalesPage = () => {
 
   const dispatch: Dispatch = useDispatch();
 
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
 
   console.log(selectedCurrency);
 

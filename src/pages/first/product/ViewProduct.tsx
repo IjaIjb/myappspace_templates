@@ -14,7 +14,8 @@ const ViewProduct = () => {
   const params = useParams();
   const selectedCurrency = localStorage.getItem("selectedCurrency") || "";
 
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
   const [singleProduct, setGetSingleProduct] = React.useState<any>([]);
 
   React.useEffect(() => {
@@ -64,7 +65,7 @@ const ViewProduct = () => {
         console.log("API Error:", error.response?.data);
         toast.error("Offline");
       });
-  }, []);
+  }, [storeCode]);
 
   const responsive = {
     superLargeDesktop: {

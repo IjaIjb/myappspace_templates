@@ -14,26 +14,23 @@ const Categories = () => {
 
   const [categories, setCategories] = React.useState<any>([]);
   // const carouselRefTwo = useRef<any>(null);
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
 
   React.useEffect(() => {
-    setLoader(true)
+    setLoader(true);
     UserApis.getCategory(storeCode)
       .then((response) => {
         if (response?.data) {
           // console?.log(response?.data);
           setCategories(response?.data);
-    setLoader(false)
-
+          setLoader(false);
         } else {
           // dispatch(login([]))
-    setLoader(false)
-
+          setLoader(false);
         }
       })
       .catch(function (error) {});
     // setLoader(false)
-
   }, [storeCode]);
 
   // console.log(categories)
@@ -59,9 +56,9 @@ const Categories = () => {
   // };
 
   //  useEffect(() => {
- 
+
   //   setLoader(true);
- 
+
   //   // const trimmedSearch = search.trim(); // Ensure search doesn't send unnecessary spaces
   //   const query = {
   //     search: "",
@@ -85,7 +82,7 @@ const Categories = () => {
   //       console.error("Error fetching products:", error);
   //     });
   // }, [storeCode, ]);
-  
+
   // Function to manually trigger left navigation
   // const handlePrevClickOne = () => {
   //   carouselRefTwo.current.previous();
@@ -112,159 +109,152 @@ const Categories = () => {
   // const hasMoreMedium = categories?.categories?.data?.length > 4;
   const hasMoreMobile = categories?.categories?.data?.length > 3;
 
-
   return (
     <div className="pt-4">
       {loader ? (
-         <div className=" shadow animate-pulse " >
-         <div className="flex justify-center items-center mb-4 h-16 bg-gray-300 rounded dark:bg-gray-400">
-       
-         </div>
-       
-         {/* <span className="sr-only">Loading...</span> */}
-       </div> 
+        <div className=" shadow animate-pulse ">
+          <div className="flex justify-center items-center mb-4 h-16 bg-gray-300 rounded dark:bg-gray-400"></div>
+
+          {/* <span className="sr-only">Loading...</span> */}
+        </div>
       ) : (
         <div className="bg-gray-200 w-full py-3">
-        <div className="max-w-[1500px] w-full md:px-[40px] px-3">
-        <div className="lg:hidden block">
-          <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
-            {categories?.categories?.data?.length > 0 ? (
-              categories?.categories?.data?.slice(0, 3).map((cat: any) => (
-                <div
-                  onClick={() => handleProductClick(cat)}
-                  key={cat?.id}
-                  className="cursor-pointer"
-                >
-                  <div className="border rounded-lg flex justify-center">
-                    {/* <img
+          <div className="max-w-[1500px] w-full md:px-[40px] px-3">
+            <div className="lg:hidden block">
+              <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
+                {categories?.categories?.data?.length > 0 ? (
+                  categories?.categories?.data?.slice(0, 3).map((cat: any) => (
+                    <div
+                      onClick={() => handleProductClick(cat)}
+                      key={cat?.id}
+                      className="cursor-pointer"
+                    >
+                      <div className="border rounded-lg flex justify-center">
+                        {/* <img
                   src={cat?.category_image}
                   className="rounded-[8px] w-[180px] h-[180px] object-contain"
                   alt="mart Logo"
                 /> */}
-                  </div>
-                  <div>
-                    <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
-                      {cat?.category_name}
-                    </h4>
-                  </div>
+                      </div>
+                      <div>
+                        <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
+                          {cat?.category_name}
+                        </h4>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>No category available</div>
+                )}
+                <div className="">
+                  {hasMoreMobile && (
+                    <Menu as="div" className="relative">
+                      <Menu.Button className="flex  items-center px-4 py-2 rounded-lg font-semibold">
+                        More
+                        <IoMdMore className="w-6 h-6" />
+                      </Menu.Button>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
+                          {categories?.categories?.data
+                            ?.slice(3)
+                            .map((cat: any) => (
+                              <Menu.Item key={cat.id}>
+                                {({ active }) => (
+                                  <button
+                                    onClick={() => handleProductClick(cat)}
+                                    className={`${
+                                      active ? "bg-gray-100" : ""
+                                    } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
+                                  >
+                                    {cat.category_name}
+                                  </button>
+                                )}
+                              </Menu.Item>
+                            ))}
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  )}
                 </div>
-              ))
-            ) : (
-              <div>No category available</div>
-            )}
-<div className="">
-{hasMoreMobile && (
-            <Menu as="div" className="relative">
-              <Menu.Button className="flex  items-center px-4 py-2 rounded-lg font-semibold">
-                More 
-                <IoMdMore  className="w-6 h-6"/>
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
-                  {categories?.categories?.data?.slice(3).map((cat: any) => (
-                    <Menu.Item key={cat.id}>
-                      {({ active }) => (
-                        <button
-                          onClick={() => handleProductClick(cat)}
-                          className={`${
-    active ? "bg-gray-100" : ""
-  } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
-                        >
-                          {cat.category_name}
-                        </button>
-                      )}
-                    </Menu.Item>
-                  ))}
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          )}
-  </div>
-
-
-
-
-          </div>
-          </div>
-
-          <div className="hidden lg:block">
-          <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
-            {categories?.categories?.data?.length > 0 ? (
-              categories?.categories?.data?.slice(0, 6).map((cat: any) => (
-                <div
-                  onClick={() => handleProductClick(cat)}
-                  key={cat?.id}
-                  className="cursor-pointer"
-                >
-                  <div className="border rounded-lg flex justify-center">
-                    {/* <img
-                  src={cat?.category_image}
-                  className="rounded-[8px] w-[180px] h-[180px] object-contain"
-                  alt="mart Logo"
-                /> */}
-                  </div>
-                  <div>
-                    <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
-                      {cat?.category_name}
-                    </h4>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div>No category available</div>
-            )}
-
-{hasMore && (
-            <Menu as="div" className="relative">
-              <Menu.Button className="bg-gray-300 px-4  rounded-lg font-semibold">
-                More
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
-                  {categories?.categories?.data?.slice(3).map((cat: any) => (
-                    <Menu.Item key={cat.id}>
-                      {({ active }) => (
-                        <button
-                          onClick={() => handleProductClick(cat)}
-                          className={`${
-    active ? "bg-gray-100" : ""
-  } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
-                        >
-                          {cat.category_name}
-                        </button>
-                      )}
-                    </Menu.Item>
-                  ))}
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          )}
- 
-
-
-          </div>
-
+              </div>
             </div>
+
+            <div className="hidden lg:block">
+              <div className="flex justify-between items-center gap-3 md:gap-8 w-full">
+                {categories?.categories?.data?.length > 0 ? (
+                  categories?.categories?.data?.slice(0, 6).map((cat: any) => (
+                    <div
+                      onClick={() => handleProductClick(cat)}
+                      key={cat?.id}
+                      className="cursor-pointer"
+                    >
+                      <div className="border rounded-lg flex justify-center">
+                        {/* <img
+                  src={cat?.category_image}
+                  className="rounded-[8px] w-[180px] h-[180px] object-contain"
+                  alt="mart Logo"
+                /> */}
+                      </div>
+                      <div>
+                        <h4 className="text-center text-[#262626] text-[16px] md:text-[20px] font-[700]">
+                          {cat?.category_name}
+                        </h4>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>No category available</div>
+                )}
+
+                {hasMore && (
+                  <Menu as="div" className="relative">
+                    <Menu.Button className="bg-gray-300 px-4  rounded-lg font-semibold">
+                      More
+                    </Menu.Button>
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border">
+                        {categories?.categories?.data
+                          ?.slice(3)
+                          .map((cat: any) => (
+                            <Menu.Item key={cat.id}>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => handleProductClick(cat)}
+                                  className={`${
+                                    active ? "bg-gray-100" : ""
+                                  } block w-full text-left px-4 py-2 text-[#262626] font-medium`}
+                                >
+                                  {cat.category_name}
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ))}
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
       )}
-    
+
       <div className="flex justify-center w-full">
         <div className="max-w-[1500px] w-full md:px-[40px] px-3">
           <div className="flex justify-center py-7">

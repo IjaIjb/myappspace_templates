@@ -18,6 +18,8 @@ import { useDispatch } from "react-redux";
 import { setCurrency } from "../../store/stateSlice";
 import NavCurrency from "./NavCurrency";
 import { login } from "../../reducer/loginSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = () => {
   // const dispatch: Dispatch = useDispatch();
@@ -36,7 +38,8 @@ const Navbar = () => {
   // const [storeCurrency, setStoreCurrency] = React.useState<any>('');
   const [logo, setLogo] = React.useState<any>('');
  
-  const storeCode = "31958095"
+  const storeCode = localStorage.getItem("storeCode") || "";
+
 
     React.useEffect(() => {
       UserApis.getAllWishlist(storeCode)
@@ -76,7 +79,7 @@ const Navbar = () => {
         console.log('eror');
     })
 
-}, []);
+}, [storeCode]);
 // const [selectedCurrency, setSelectedCurrency] = useState(storeCurrency?.default_currency || "USD");
 
   React.useEffect(() => {
@@ -85,7 +88,7 @@ const Navbar = () => {
         console.log(response?.data);
         // setStoreCurrency(response?.data?.configs?.payment?.settings);
         // setSelectedCurrency(response?.data?.configs.payment?.settings?.default_currency || "");
-        setLogo(response?.data?.configs?.logo?.settings?.logo);
+        setLogo(response?.data?.store?.store_logo);
         dispatch(setCurrency(response?.data?.configs.payment?.settings?.default_currency || ""));
 
         localStorage.setItem("store_name", response?.data?.store?.store_name); // Save to localStorage
@@ -127,7 +130,7 @@ const logOut = () => {
     if (search.trim() !== '') {
         navigate('/product', { state: { searchMe: search } });
     } else {
-        alert("Please enter a keyword to search.");
+      toast.error("Please enter a keyword to search.");
     }
   };
   return (
@@ -961,6 +964,18 @@ const logOut = () => {
           {/* <AutoCompleteSearch /> */}
         </div>
       </nav>
+
+            <ToastContainer
+              position="bottom-left"
+              autoClose={2000}
+              hideProgressBar={true}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
 
       {/* <div className="border-y my-1">
         <div className=" w-full">

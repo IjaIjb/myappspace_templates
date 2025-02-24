@@ -79,7 +79,8 @@ const CreateAddress = () => {
   });
 
   const [stateOptions, setStateOptions] = useState<any>([]);
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -141,7 +142,7 @@ const CreateAddress = () => {
           toast.error("Offfline");
         });
     },
-    [userData, navigate]
+    [userData, navigate, storeCode]
   );
 
   return (

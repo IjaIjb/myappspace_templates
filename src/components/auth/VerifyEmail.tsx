@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 // import { NavLink } from 'react-router-dom'
 import { UserApis } from '../../apis/userApi/userApi';
@@ -12,7 +12,18 @@ import "react-toastify/dist/ReactToastify.css";
 import LoadingSpinner from '../UI/LoadingSpinner';
 
 const VerifyEmail = () => {
-  const storeCode = "31958095";
+  const storeCode = localStorage.getItem("storeCode") || "";
+
+  const [storeLogo, setStoreLogo] = useState<any>(null); // Store logo URL
+  
+  useEffect(() => {
+ const storedLogo = localStorage.getItem("storeLogo");
+
+      if (storedLogo) {
+          setStoreLogo(storedLogo);
+      }
+  }, []);
+  
   const location = useLocation();
   const email = location.state?.email || ""; // ✅ Retrieve email from state
      const [code, setCode] = useState("");
@@ -71,7 +82,7 @@ const VerifyEmail = () => {
     <div className="container flex flex-col md:justify-center mx-auto items-center rounded-lg p-6 md:max-w-3xl">
       <div>
       <div className='flex justify-center'>
-                        <img src="./images/logo.png" className="" alt="mart Logo" />
+                        <img src={storeLogo} className="w-full h-6" alt="mart Logo" />
                     </div>
         {/* <h1 className="mt-6 text-[#000] lg:text-[32px] text-[28px] font-semibold text-center">Verify Your Email Address</h1>
         <p className='mt-4 text-center text-[#00000080] text-[14px] font-normal'>To start using M Mart we need to verify your email address:</p> */}
