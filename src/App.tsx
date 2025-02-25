@@ -1,49 +1,71 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import routes from "./routes/Index";
 import { UserApis } from "./apis/userApi/userApi";
+import LoadingSpinnerPage from "./components/UI/LoadingSpinnerPage"; // Import the spinner
 
 function App() {
-  // const [storeCode, setStoreCode] = React.useState<string>(() => localStorage.getItem("storeCode") || "");
-  // const [storeLogo, setStoreLogo] = React.useState<any>(() => localStorage.getItem("storeLogo") || "");
-  
-  React.useEffect(() => {
-      // const storedCode = localStorage.getItem("storeCode");
-      // const storedLogo = localStorage.getItem("storeLogo");
-  
-      // if (storedCode && storedLogo) {
-      //     setStoreCode(storedCode);
-      //     setStoreLogo(storedLogo);
-      //     return; // ✅ Skip API call if data exists
-      // }
-  
-      const fullURL = window.location.origin;
-      console.log(fullURL);
-  
-      UserApis.fetchStoreDataDomain(fullURL).then((response) => {
-          if (response?.data?.store?.store_code) {
-              const code = response.data.store.store_code;
-              const logo:any = response.data.store.store_logo;
-              console.log(response.data);
-              console.log(code);
-              // setStoreCode(code);
-              // setStoreLogo(logo);
-              localStorage.setItem("storeCode", code); // Store in localStorage
-              localStorage.setItem("storeLogo", logo); // Store in localStorage
-          }
+  const [isSitePublished, setIsSitePublished] = useState<boolean | null>(null); // Track if store data is found
+
+  useEffect(() => {
+    const fullURL = window.location.origin;
+    console.log(fullURL);
+
+    UserApis.fetchStoreDataDomain(fullURL)
+      .then((response) => {
+        if (response?.data?.store?.store_code) {
+          const code = response.data.store.store_code;
+          const logo: any = response.data.store.store_logo;
+          console.log(response.data);
+          console.log(code);
+
+          localStorage.setItem("storeCode", code);
+          localStorage.setItem("storeLogo", logo);
+
+          setIsSitePublished(true); // Store data found, mark as published
+        } else {
+          setIsSitePublished(false); // No store data found
+        }
+      })
+      .catch(() => {
+        setIsSitePublished(false); // Handle API error
       });
-  }, []); // Runs only once when the component mounts
-  
+  }, []);
+
+  if (isSitePublished === null) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="px-2 md:px-5 w-[100px] h-[100px] shadow-xl bg-white flex justify-center items-center text-center">
+          <LoadingSpinnerPage />
+        </div>
+      </div>
+    );
+  }
+
+  if (isSitePublished === false) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white text-2xl">
+        Site is yet to be published
+      </div>
+    );
+  }
 
   return (
     <div>
-      <Suspense fallback={<div></div>}>
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen">
+          <div className="px-2 md:px-5 w-[100px] h-[100px] shadow-xl bg-white flex justify-center items-center text-center">
+            <LoadingSpinnerPage />
+          </div>
+        </div>
+      }>
         <Routes>
-          {routes.map((route: any, i: number) =>
-            route.component ? (
-              <Route key={i} path={route.path} element={<route.component />} />
-            ) : null
+          {routes.map(
+            (route: any, i: number) =>
+              route.component && (
+                <Route key={i} path={route.path} element={<route.component />} />
+              )
           )}
         </Routes>
       </Suspense>
