@@ -15,11 +15,14 @@ function App() {
     UserApis.fetchStoreDataDomain(fullURL)
       .then((response) => {
         if (response?.data?.store?.store_code) {
+          console.log(response.data)
+          const storeAbbreviation = response.data.store.store_abbreviation;
           const code = response.data.store.store_code;
           const logo: any = response.data.store.store_logo;
           console.log(response.data);
           console.log(code);
 
+          localStorage.setItem("storeabbreviation", storeAbbreviation);
           localStorage.setItem("storeCode", code);
           localStorage.setItem("storeLogo", logo);
 
@@ -46,7 +49,7 @@ function App() {
   if (isSitePublished === false) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white text-2xl">
-        Site is yet to be published
+        Store is not Currently Available
       </div>
     );
   }

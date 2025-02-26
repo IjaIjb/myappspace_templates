@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink } from "react-router-dom";
 import { IoLogoTiktok } from "react-icons/io5";
+import { UserApis } from '../../apis/userApi/userApi';
 
 const Footer = () => {
+  const date = new Date();
+ 
   // const storeCode = localStorage.getItem("storeCode") || "";
   const [storeLogo, setStoreLogo] = useState<any>(null); // Store logo URL
+  const storeCode = localStorage.getItem("storeCode") || "";
+  const storeAbbreviation = localStorage.getItem("storeabbreviation") || "";
+      
+  
+  const [storeContact, setStoreContact] = React.useState<any>([]);
     
     useEffect(() => {
     const storedLogo = localStorage.getItem("storeLogo");
@@ -13,6 +21,18 @@ const Footer = () => {
             setStoreLogo(storedLogo);
         }
     }, []);
+
+      React.useEffect(() => {
+        UserApis.fetchStoreData(storeCode).then((response) => {
+          if (response?.data) {
+              console.log(response.data);
+            // setStoreData(response?.data?.store);
+            setStoreContact(response?.data?.configs?.contacts?.settings);
+       
+          }
+        });
+      }, [storeCode]);
+      console.log(storeContact)
   return (
     <div className="  left-0 right-0 bottom-0  pt-10  ">
     <div className=" bg-[#004F9A] py-2">
@@ -36,12 +56,15 @@ const Footer = () => {
               Contact Us
             </h4>
 
-            <div className="flex space-x-2">
-              <img src="/images/phone.png" className="" alt="payments" />
-              <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212]">
-                +2348148268019
-              </h3>
-            </div>
+{storeContact?.phoneNumber && (
+     <div className="flex space-x-2">
+     <img src="/images/phone.png" className="" alt="payments" />
+     <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212]">
+      {storeContact?.phoneNumber}
+     </h3>
+   </div>
+)}
+       
             <div className="flex space-x-2 mt-2">
               <img src="/images/email.png" className="" alt="payments" />
               <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212] mt-1">
@@ -102,24 +125,37 @@ const Footer = () => {
               Contact Us
             </h4>
 
+            {storeContact?.phoneNumber && (
             <div className="flex space-x-2">
               <img src="/images/phone.png" className="" alt="payments" />
               <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212]">
-                +2348148268019
+{storeContact?.phoneNumber}
               </h3>
             </div>
-            <div className="flex space-x-2 mt-2">
-              <img src="/images/email.png" className="" alt="payments" />
-              <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212] mt-1">
-                Info@mmartplus.com
-              </h3>
-            </div>
-            <div className="flex space-x-2 mt-2">
-              <img src="/images/location.png" className="" alt="payments" />
-              <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212] mt-1">
-                Plot 1407G Shalom Road, Amuwo Odofin,
-              </h3>
-            </div>
+            )}
+       {storeContact?.email && (
+  <div className="flex space-x-2 mt-2">
+    <img src="/images/email.png" alt="email icon" />
+    <a 
+    target="_blank"  
+    rel="noreferrer"
+      href={`mailto:${storeContact.email}`} 
+      className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212] mt-1"
+    >
+      {storeContact.email}
+    </a>
+  </div>
+)}
+
+{storeContact?.address && (
+   <div className="flex space-x-2 mt-2">
+   <img src="/images/location.png" className="" alt="payments" />
+   <h3 className="mb-2 text-[10px] md:text-[12px] font-medium text-[#131212] mt-1">
+ {storeContact?.address}
+   </h3>
+ </div>
+)}
+         
           </div>
 
           <div className="hidden lg:block">
@@ -146,22 +182,37 @@ const Footer = () => {
               Our Socials
             </h4>
             <div className="flex space-x-5">
-              <a target="_blank"  rel="noreferrer" href="/">
-                <img src="/images/fbook.png" className="" alt="socials" />
-              </a>
-              <a target="_blank"  rel="noreferrer" href="https://www.X.com/mmartplus_">
-                <img src="/images/twitter.png" className="" alt="socials" />
-              </a>
+              {storeContact?.facebook && (
+  <a target="_blank"  rel="noreferrer" href={storeContact?.facebook}>
+  <img src="/images/fbook.png" className="" alt="socials" />
+</a>
+              )}
+            
+            {storeContact?.twitter && (
+ <a target="_blank"  rel="noreferrer" href={storeContact?.twitter}>
+ <img src="/images/twitter.png" className="" alt="socials" />
+</a>
+            )}
+             
               {/* to="https://www.instagram.com/mmartplus_" */}
-              <a href="https://www.instagram.com/mmartplus_" target="_blank"  rel="noreferrer">
-                <img src="/images/instagram.png" className="" alt="socials" />
-              </a>
-              <a href="https://www.youtube.com/@mmartplus" target="_blank"  rel="noreferrer">
-                <img src="/images/youtube.png" className="" alt="socials" />
-              </a>
-              <a href="https://www.tiktok.com/@mmartplus_" className="pt-1" target="_blank"  rel="noreferrer">
-                <IoLogoTiktok className="text-[#FFC220] w-5 h-5" />
-              </a>
+              {storeContact?.instagram && (
+  <a href={storeContact?.instagram} target="_blank"  rel="noreferrer">
+  <img src="/images/instagram.png" className="" alt="socials" />
+</a>
+              )}
+            
+            {storeContact?.youtube && (
+  <a href={storeContact?.youtube} target="_blank"  rel="noreferrer">
+  <img src="/images/youtube.png" className="" alt="socials" />
+</a>
+            )}
+            
+            {storeContact?.tiktok && (
+  <a href={storeContact?.tiktok} className="pt-1" target="_blank"  rel="noreferrer">
+  <IoLogoTiktok className="text-[#FFC220] w-5 h-5" />
+</a>
+            )}
+            
             </div>
           </div>
         </div>
@@ -209,7 +260,8 @@ const Footer = () => {
           </div>
           <div className="text-center lg:mt-0 mt-3">
             <span className="text-[14px] text-white ">
-              © 2024 M-Mart Plus. All Rights Reserved.
+              
+              &copy; {date.getFullYear()} {storeAbbreviation}. All Rights Reserved.
             </span>
           </div>
         </div>
@@ -231,7 +283,8 @@ const Footer = () => {
             </div>
             <div className="text-center lg:mt-0 mt-3">
               <span className="text-[14px] text-white ">
-                © 2024 M-Mart Plus. All Rights Reserved.
+              
+                &copy; {date.getFullYear()} {storeAbbreviation}. All Rights Reserved.
               </span>
             </div>
           </div>
